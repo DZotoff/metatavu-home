@@ -5,7 +5,6 @@ import type {
   VacationRequest,
   VacationRequestStatus,
   VacationRequestStatuses,
-  Person
 } from "src/generated/client";
 import { useApi } from "src/hooks/use-api";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
@@ -25,9 +24,9 @@ import UserRoleUtils from "src/utils/user-role-utils";
 import { Link } from "react-router-dom";
 import { KeyboardReturn } from "@mui/icons-material";
 import LocalizationUtils from "src/utils/localization-utils";
-import { personsAtom } from "src/atoms/person";
-import config from "src/app/config";
 import { renderVacationDaysTextForScreen } from "src/utils/vacation-days-utils";
+import { usersAtom } from "src/atoms/user";
+import type { User } from "src/generated/homeLambdasClient";
 
 /**
  * Vacation requests screen
@@ -56,10 +55,10 @@ const VacationRequestsScreen = () => {
   );
   const [loading, setLoading] = useState(false);
   const [isUpcoming, setIsUpcoming] = useState(true);
-  const [persons] = useAtom(personsAtom);
-  const loggedInPerson = persons.find(
-    (person: Person) =>
-      person.id === config.person.forecastUserIdOverride || person.keycloakId === userProfile?.id
+  const [users] = useAtom(usersAtom);
+  const loggedInUser = users.find(
+    (user: User) =>
+      user.id === userProfile?.id
   );
 
   /**
@@ -152,16 +151,16 @@ const VacationRequestsScreen = () => {
    */
   const fetchVacationsRequests = async () => {
     setLoading(true);
-    if (!loggedInPerson) return;
+    if (!loggedInUser) return;
 
     if (!vacationRequests.length) {
       try {
-        let fetchedVacationRequests: VacationRequest[] = [];
+        let fetchedVacationRequests = [];
         if (adminMode) {
           fetchedVacationRequests = await vacationRequestsApi.listVacationRequests({});
         } else {
           fetchedVacationRequests = await vacationRequestsApi.listVacationRequests({
-            personId: loggedInPerson?.keycloakId
+            personId: loggedInUser?.id
           });
         }
         setVacationRequests(fetchedVacationRequests);
@@ -174,7 +173,7 @@ const VacationRequestsScreen = () => {
 
   useMemo(() => {
     fetchVacationsRequests();
-  }, [loggedInPerson]);
+  }, [loggedInUser]);
 
   /**
    * Delete vacation request status
@@ -244,7 +243,7 @@ const VacationRequestsScreen = () => {
     newStatus: VacationRequestStatuses,
     selectedRowId: GridRowId
   ) => {
-    if (!loggedInPerson) return;
+    if (!loggedInUser) return;
 
     try {
       setLoading(true);
@@ -257,9 +256,9 @@ const VacationRequestsScreen = () => {
             status: newStatus,
             message: LocalizationUtils.getLocalizedVacationRequestStatus(newStatus),
             createdAt: new Date(),
-            createdBy: loggedInPerson.keycloakId,
+            createdBy: loggedInUser.id,
             updatedAt: new Date(),
-            updatedBy: loggedInPerson.keycloakId
+            updatedBy: loggedInUser.id
           }
         });
       return createdVacationRequestStatus;
@@ -275,7 +274,7 @@ const VacationRequestsScreen = () => {
    * @param vacationData vacation data
    */
   const createVacationRequest = async (vacationData: VacationData) => {
-    if (!loggedInPerson) return;
+    if (!loggedInUser) return;
 
     try {
       setLoading(true);
@@ -305,7 +304,7 @@ const VacationRequestsScreen = () => {
    * @param vacationRequestId vacation request id
    */
   const updateVacationRequest = async (vacationData: VacationData, vacationRequestId: string) => {
-    if (!loggedInPerson) return;
+    if (!loggedInUser) return;
 
     try {
       setLoading(true);
@@ -449,7 +448,7 @@ const VacationRequestsScreen = () => {
 
   return (
     <>
-      {loggedInPerson && renderVacationDaysTextForScreen(loggedInPerson)}
+      {loggedInUser && renderVacationDaysTextForScreen(loggedInUser)}
       <Card sx={{ margin: 0, padding: "10px", width: "100%", height: "100", marginBottom: "16px" }}>
         <VacationRequestsTable
           isUpcoming={isUpcoming}

@@ -24,7 +24,7 @@ import UserRoleUtils from "src/utils/user-role-utils";
 import { DateTime } from "luxon";
 import LocalizationUtils from "src/utils/localization-utils";
 import { getVacationRequestPersonFullName } from "src/utils/vacation-request-utils";
-import { personsAtom } from "src/atoms/person";
+import { usersAtom } from "src/atoms/user";
 import { userProfileAtom } from "src/atoms/auth";
 
 /**
@@ -71,7 +71,7 @@ const VacationRequestsTable = ({
   const [rows, setRows] = useState<VacationsDataGridRow[]>([]);
   const language = useAtomValue(languageAtom);
   const columns = VacationRequestsTableColumns();
-  const persons = useAtomValue(personsAtom);
+  const users = useAtomValue(usersAtom);
   const userProfile = useAtomValue(userProfileAtom);
   const dataGridHeight = 700;
   const dataGridRowHeight = 52;
@@ -127,7 +127,7 @@ const VacationRequestsTable = ({
         if (vacationRequest.personId) {
           row.personFullName = getVacationRequestPersonFullName(
             vacationRequest,
-            persons,
+            users,
             userProfile
           );
         }

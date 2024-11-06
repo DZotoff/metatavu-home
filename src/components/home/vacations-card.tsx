@@ -10,7 +10,6 @@ import {
   type VacationRequest,
   type VacationRequestStatus,
   VacationRequestStatuses,
-  type Person
 } from "src/generated/client";
 import { useApi } from "src/hooks/use-api";
 import { DateTime } from "luxon";
@@ -24,12 +23,12 @@ import {
 import { getVacationRequestStatusColor } from "src/utils/vacation-status-utils";
 import UserRoleUtils from "src/utils/user-role-utils";
 import { Check, Pending } from "@mui/icons-material";
-import { personsAtom } from "src/atoms/person";
 import { getVacationRequestPersonFullName } from "src/utils/vacation-request-utils";
 import { validateValueIsNotUndefinedNorNull } from "src/utils/check-utils";
 import type { VacationInfoListItem } from "src/types";
 import { formatDate } from "src/utils/time-utils";
-import config from "src/app/config";
+import type {User} from "src/generated/homeLambdasClient";
+import {usersAtom} from "src/atoms/user.ts";
 // TODO: Component is commented out due backend calculations about vacation days being incorrect. Once the error is fixed, introduce the text components back in the code.
 // import { renderVacationDaysTextForCard } from "../../utils/vacation-days-utils";
 
@@ -48,10 +47,10 @@ const VacationsCard = () => {
     adminMode ? allVacationRequestStatusesAtom : vacationRequestStatusesAtom
   );
   const [loading, setLoading] = useState(false);
-  const [persons] = useAtom(personsAtom);
-  const loggedInPerson = persons.find(
-    (person: Person) =>
-      person.id === config.person.forecastUserIdOverride || person.keycloakId === userProfile?.id
+  const [users] = useAtom(usersAtom);
+  const loggedInUser = users.find(
+    (user: User) =>
+      user.id === userProfile?.id
   );
 
   /**
@@ -128,16 +127,16 @@ const VacationsCard = () => {
    */
   const fetchVacationsRequests = async () => {
     setLoading(true);
-    if (!loggedInPerson) return;
+    if (!loggedInUser) return;
 
     if (!vacationRequests.length) {
       try {
-        let fetchedVacationRequests: VacationRequest[] = [];
+        let fetchedVacationRequests = [];
         if (adminMode) {
           fetchedVacationRequests = await vacationRequestsApi.listVacationRequests({});
         } else {
           fetchedVacationRequests = await vacationRequestsApi.listVacationRequests({
-            personId: loggedInPerson.keycloakId
+            personId: loggedInUser.id
           });
         }
         setVacationRequests(fetchedVacationRequests);
@@ -150,7 +149,7 @@ const VacationsCard = () => {
 
   useMemo(() => {
     fetchVacationsRequests();
-  }, [loggedInPerson]);
+  }, [loggedInUser]);
 
   /**
    * Get pending vacation requests by checking wether it has a status or not
@@ -245,7 +244,7 @@ const VacationsCard = () => {
           name: strings.vacationsCard.applicant,
           value: getVacationRequestPersonFullName(
             earliestUpcomingVacationRequest,
-            persons,
+            users,
             userProfile
           )
         },
@@ -378,7 +377,7 @@ const VacationsCard = () => {
           <Grid container>
             <Box sx={{ width: "100%", display: "flex", flexDirection: "column", mb: 2 }}>
               {/* TODO: Component is commented out due backend calculations about vacation days being incorrect. Once the error is fixed, introduce the text components back in the code. */}
-              {/* {loggedInPerson && renderVacationDaysTextForCard(loggedInPerson)} */}
+              {/* {loggedInUser && renderVacationDaysTextForCard(loggedInUser)} */}
             </Box>
             {renderUpcomingOrPendingVacationRequestsCount()}
             {renderEarliestUpcomingVacationRequest()}

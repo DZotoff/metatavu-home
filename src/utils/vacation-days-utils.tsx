@@ -1,21 +1,17 @@
 import { Grid, Typography } from "@mui/material";
 import { theme } from "../theme";
-import type { Person } from "../generated/client";
 import strings from "../localization/strings";
+import type { User } from "src/generated/homeLambdasClient";
 
 /**
- * Display persons vacation days
+ * Display persons vacation days in card
  *
- * @param Person timebank person
+ * @param User KeyCloak user
  */
-export const renderVacationDaysTextForCard = (person: Person) => {
-  const spentVacationsColor =
-    person && person.spentVacations > 0 ? theme.palette.success.main : theme.palette.error.main;
+export const renderVacationDaysTextForCard = (user: User) => {
+  const { spentVacationsColor, unspentVacationsColor } = getVacationColors(user);
 
-  const unspentVacationsColor =
-    person && person.unspentVacations > 0 ? theme.palette.success.main : theme.palette.error.main;
-
-  if (person) {
+  if (user) {
     return (
       <Grid>
         <Grid container spacing={2} alignItems="center">
@@ -23,7 +19,9 @@ export const renderVacationDaysTextForCard = (person: Person) => {
             {strings.vacationsCard.spentVacations}
           </Grid>
           <Grid item xs={6}>
-            <Typography color={spentVacationsColor}>{person.spentVacations}</Typography>
+            <Typography color={spentVacationsColor}>
+              {/*{user.spentVacations}*/}
+            </Typography>
           </Grid>
         </Grid>
         <Grid container spacing={2} alignItems="center">
@@ -31,7 +29,9 @@ export const renderVacationDaysTextForCard = (person: Person) => {
             {strings.vacationsCard.unspentVacations}
           </Grid>
           <Grid item xs={6}>
-            <Typography color={unspentVacationsColor}>{person.unspentVacations}</Typography>
+            <Typography color={unspentVacationsColor}>
+              {/*{user.unspentVacations}*/}
+            </Typography>
           </Grid>
         </Grid>
       </Grid>
@@ -41,30 +41,28 @@ export const renderVacationDaysTextForCard = (person: Person) => {
 };
 
 /**
- * Display persons vacation days
+ * Display users vacation days in screen
  *
- * @param Person timebank person
+ * @param User KeyCloak user
  */
-export const renderVacationDaysTextForScreen = (person: Person) => {
-  const spentVacationsColor =
-    person && person.spentVacations > 0 ? theme.palette.success.main : theme.palette.error.main;
+export const renderVacationDaysTextForScreen = (user: User) => {
+  //FIXME: Deal with the spent and unspent vacations
+  const spentVacationsColor = theme.palette.error.main;
+  const unspentVacationsColor = theme.palette.error.main;
 
-  const unspentVacationsColor =
-    person && person.unspentVacations > 0 ? theme.palette.success.main : theme.palette.error.main;
-
-  if (person) {
+  if (user) {
     return (
       <Grid container justifyContent="space-around">
         <Grid item style={{ display: "flex", alignItems: "center" }}>
           {strings.vacationsCard.spentVacations}
           <Typography color={spentVacationsColor} style={{ marginLeft: "8px" }}>
-            {person.spentVacations}
+            {/*{user.spentVacations}*/}
           </Typography>
         </Grid>
         <Grid item style={{ display: "flex", alignItems: "center" }}>
           {strings.vacationsCard.unspentVacations}
           <Typography color={unspentVacationsColor} style={{ marginLeft: "8px" }}>
-            {person.unspentVacations}
+            {/*{user.unspentVacations}*/}
           </Typography>
         </Grid>
       </Grid>
@@ -72,3 +70,23 @@ export const renderVacationDaysTextForScreen = (person: Person) => {
   }
     return <Typography>{strings.error.personsFetch}</Typography>;
 };
+
+const getVacationColors = (user: User)=> {
+  //FIXME: Deal with the spent and unspent vacations
+  // Default colors, to be modified later once `spentVacations` and `unspentVacations` are available
+  const spentVacationsColor = theme.palette.error.main;
+  const unspentVacationsColor = theme.palette.error.main;
+
+  // Uncomment and modify when `spentVacations` and `unspentVacations` properties are available
+  // if (user && user.spentVacations > 0) {
+  //   spentVacationsColor = theme.palette.success.main;
+  // }
+  // if (user && user.unspentVacations > 0) {
+  //   unspentVacationsColor = theme.palette.success.main;
+  // }
+
+  return {
+    spentVacationsColor,
+    unspentVacationsColor
+  };
+}
