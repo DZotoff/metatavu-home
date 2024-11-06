@@ -4,20 +4,12 @@ import strings from "../localization/strings";
 import type { User } from "src/generated/homeLambdasClient";
 
 /**
- * Display persons vacation days
+ * Display persons vacation days in card
  *
  * @param User KeyCloak user
  */
 export const renderVacationDaysTextForCard = (user: User) => {
-  // const spentVacationsColor =
-  //   user && user.spentVacations > 0 ? theme.palette.success.main : theme.palette.error.main;
-  //
-  // const unspentVacationsColor =
-  //   user && user.unspentVacations > 0 ? theme.palette.success.main : theme.palette.error.main;
-
-  //FIXME: Deal with the spent and unspent vacations
-  const spentVacationsColor = theme.palette.error.main;
-  const unspentVacationsColor = theme.palette.error.main;
+  const { spentVacationsColor, unspentVacationsColor } = getVacationColors(user);
 
   if (user) {
     return (
@@ -49,17 +41,11 @@ export const renderVacationDaysTextForCard = (user: User) => {
 };
 
 /**
- * Display persons vacation days
+ * Display users vacation days in screen
  *
- * @param Person timebank user
+ * @param User KeyCloak user
  */
 export const renderVacationDaysTextForScreen = (user: User) => {
-  // const spentVacationsColor =
-  //   user && user.spentVacations > 0 ? theme.palette.success.main : theme.palette.error.main;
-  //
-  // const unspentVacationsColor =
-  //   user && user.unspentVacations > 0 ? theme.palette.success.main : theme.palette.error.main;
-
   //FIXME: Deal with the spent and unspent vacations
   const spentVacationsColor = theme.palette.error.main;
   const unspentVacationsColor = theme.palette.error.main;
@@ -84,3 +70,23 @@ export const renderVacationDaysTextForScreen = (user: User) => {
   }
     return <Typography>{strings.error.personsFetch}</Typography>;
 };
+
+const getVacationColors = (user: User)=> {
+  //FIXME: Deal with the spent and unspent vacations
+  // Default colors, to be modified later once `spentVacations` and `unspentVacations` are available
+  const spentVacationsColor = theme.palette.error.main;
+  const unspentVacationsColor = theme.palette.error.main;
+
+  // Uncomment and modify when `spentVacations` and `unspentVacations` properties are available
+  // if (user && user.spentVacations > 0) {
+  //   spentVacationsColor = theme.palette.success.main;
+  // }
+  // if (user && user.unspentVacations > 0) {
+  //   unspentVacationsColor = theme.palette.success.main;
+  // }
+
+  return {
+    spentVacationsColor,
+    unspentVacationsColor
+  };
+}
