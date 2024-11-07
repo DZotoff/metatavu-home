@@ -116,9 +116,6 @@ const NewQuestionnaireScreen = () => {
       return createdQuestionnaire;
     } catch (error) {
       setError(`${strings.error.questionnaireSaveFailed}, ${error}`);
-      setTimeout(() => {
-        setError(undefined);
-      }, 5000);
     }
     setLoading(false);
   };

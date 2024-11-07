@@ -30,7 +30,7 @@
     "fetchFailedGeneral": "Tietojen hakeminen epäonnistui",
     "fetchFailedNoEntriesGeneral": "Ei aikatietoja saatavilla",
     "fetchSlackAvatarsFailed": "Virhe Slack-avatareita pyydettäessä",
-    "questionnaireSaveFailed": "Kyselyn tallentaminen epäonnistui"
+    "questionnaireSaveFailed": "Virhe kyselyn tallennuksessa"
   },
   "localization": {
     "en": "EN",

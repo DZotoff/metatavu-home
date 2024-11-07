@@ -30,7 +30,7 @@
     "fetchFailedGeneral": "There was an error fetching data",
     "fetchFailedNoEntriesGeneral": "No time entries found",
     "fetchSlackAvatarsFailed": "Error while fetching Slack avatars",
-    "questionnaireSaveFailed": "Saving questionnaire has failed"
+    "questionnaireSaveFailed": "Error while saving questionnaire"
   },
   "localization": {
     "en": "EN",
