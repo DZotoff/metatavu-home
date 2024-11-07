@@ -117,10 +117,18 @@ const NewQuestionnaireScreen = () => {
   const saveQuestionnaire = async () => {
     setLoading(true);
     try {
+      console.log("Try to save this:", questionnaire);
+
       const createdQuestionnaire = await questionnairesApi.createQuestionnaires({
-        questionnaire: questionnaire
+        questionnaire: {
+          title: questionnaire.title,
+          description: questionnaire.description,
+          options: questionnaire.options,
+          passScore: questionnaire.passScore
+        }
       });
       closeAndClear();
+      console.log("This is what was saved:", createdQuestionnaire);
       return createdQuestionnaire;
     } catch (error) {
       setError(`${strings.error.questionnaireSaveFailed}, ${error}`);
