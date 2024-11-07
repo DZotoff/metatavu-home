@@ -176,3 +176,12 @@ export interface Question {
   options: QuestionOption[];
 }
 
+/**
+ * Type describing a questionnaire in New Questionnaire Screen
+ */
+export interface Questionnaire {
+  title: string;
+  description: string;
+  options: Question[];
+  passScore: number;
+}

@@ -19,7 +19,7 @@ import { Link } from "react-router-dom";
 import NewQuestionnaireCard from "../questionnaire/new-questionnaire-card";
 import { KeyboardReturn } from "@mui/icons-material";
 import UserRoleUtils from "src/utils/user-role-utils";
-import type { Question, QuestionOption } from "src/types/index";
+import type { Questionnaire, QuestionOption } from "src/types/index";
 import strings from "src/localization/strings";
 import { useLambdasApi } from "src/hooks/use-api";
 import { useSetAtom } from "jotai";
@@ -30,13 +30,15 @@ import { errorAtom } from "src/atoms/error";
  */
 const NewQuestionnaireScreen = () => {
   const adminMode = UserRoleUtils.adminMode();
-  const { questionnaireApi } = useLambdasApi();
+  const { questionnairesApi } = useLambdasApi();
   const [loading, setLoading] = useState(false);
   const setError = useSetAtom(errorAtom);
-  const [questionnaireTitle, setQuestionnaireTitle] = useState("");
-  const [questionnaireDescription, setQuestionnaireDescription] = useState("");
-  const [options, setOptions] = useState<Question[]>([]);
-  const [passScoreValue, setPassScoreValue] = useState(0);
+  const [questionnaire, setQuestionnaire] = useState<Questionnaire>({
+    title: "",
+    description: "",
+    options: [],
+    passScore: 0
+  });
 
   /**
    * Function to handle input change in the questionnaire title and description
@@ -44,11 +46,10 @@ const NewQuestionnaireScreen = () => {
    */
   const handleQuestionnaireInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    if (name === "title") {
-      setQuestionnaireTitle(value);
-    } else if (name === "description") {
-      setQuestionnaireDescription(value);
-    }
+    setQuestionnaire((prevQuestionnaire) => ({
+      ...prevQuestionnaire,
+      [name]: value
+    }));
   };
 
   /**
@@ -57,7 +58,10 @@ const NewQuestionnaireScreen = () => {
    * @param value number
    */
   const handlePassScoreSliderChange = (_: Event, value: number | number[]) => {
-    setPassScoreValue(value as number);
+    setQuestionnaire((prevQuestionnaire) => ({
+      ...prevQuestionnaire,
+      passScore: value as number
+    }));
   };
 
   /**
@@ -66,7 +70,13 @@ const NewQuestionnaireScreen = () => {
    * @param list of QuestionOptions
    */
   const handleAddQuestion = (questionText: string, options: QuestionOption[]) => {
-    setOptions((prevQuestions: Question[]) => [...prevQuestions, { questionText, options }]);
+    setQuestionnaire((prevQuestionnaire) => ({
+      ...prevQuestionnaire,
+      options: [
+        ...prevQuestionnaire.options,
+        { questionText, options }
+      ]
+    }));
   };
 
   /**
@@ -74,16 +84,17 @@ const NewQuestionnaireScreen = () => {
    * @param index
    */
   const removeQuestionFromPreview = (index: number) => {
-    const updatedQuestions = [...options];
-    updatedQuestions.splice(index, 1);
-    setOptions(updatedQuestions);
+    setQuestionnaire((prevQuestionnaire) => ({
+      ...prevQuestionnaire,
+      options: prevQuestionnaire.options.filter((_, i) => i !== index)
+    }));
   };
 
   /**
    * Function to count all correct answers in the questionnaire, used for passScore determination
    */
   const countCorrectAnswers = () => {
-    return options.reduce((count, question) => {
+    return questionnaire.options.reduce((count, question) => {
       return count + question.options.filter((option) => option.value === true).length;
     }, 0);
   };
@@ -92,10 +103,12 @@ const NewQuestionnaireScreen = () => {
    * Function to close and clear the questionnaire form
    */
   const closeAndClear = async () => {
-    setQuestionnaireTitle("");
-    setQuestionnaireDescription("");
-    setOptions([]);
-    setPassScoreValue(0);
+    setQuestionnaire({
+      title: "",
+      description: "",
+      options: [],
+      passScore: 0
+    });
   };
 
   /**
@@ -104,13 +117,8 @@ const NewQuestionnaireScreen = () => {
   const saveQuestionnaire = async () => {
     setLoading(true);
     try {
-      const createdQuestionnaire = await questionnaireApi.createQuestionnaire({
-        questionnaire: {
-          title: questionnaireTitle,
-          description: questionnaireDescription,
-          options: options,
-          passScore: passScoreValue
-        }
+      const createdQuestionnaire = await questionnairesApi.createQuestionnaires({
+        questionnaire: questionnaire
       });
       closeAndClear();
       return createdQuestionnaire;
@@ -140,7 +148,7 @@ const NewQuestionnaireScreen = () => {
             name="title"
             label={strings.newQuestionnaireScreen.title}
             placeholder={strings.newQuestionnaireScreen.insertTitle}
-            value={questionnaireTitle}
+            value={questionnaire.title}
             onChange={handleQuestionnaireInputChange}
             variant="outlined"
             fullWidth
@@ -150,7 +158,7 @@ const NewQuestionnaireScreen = () => {
             name="description"
             label={strings.newQuestionnaireScreen.description}
             placeholder={strings.newQuestionnaireScreen.insertDescription}
-            value={questionnaireDescription}
+            value={questionnaire.description}
             onChange={handleQuestionnaireInputChange}
             variant="outlined"
             fullWidth
@@ -176,10 +184,10 @@ const NewQuestionnaireScreen = () => {
                 {strings.newQuestionnaireScreen.countedAnswers} {countCorrectAnswers()}
               </Typography>
               <Typography variant="h6" gutterBottom sx={{ mb: 1, mt: 1 }}>
-                {strings.newQuestionnaireScreen.requiredAnswers} {passScoreValue}
+                {strings.newQuestionnaireScreen.requiredAnswers} {questionnaire.passScore}
               </Typography>
               <Slider
-                value={passScoreValue}
+                value={questionnaire.passScore}
                 onChange={handlePassScoreSliderChange}
                 step={1}
                 marks
@@ -237,9 +245,9 @@ const NewQuestionnaireScreen = () => {
               </Typography>
             </Grid>
             <Typography variant="h5" gutterBottom>
-              {questionnaireTitle}
+              {questionnaire.title}
             </Typography>
-            {options.map((q, index) => (
+            {questionnaire.options.map((q, index) => (
               <Grid item xs={12} key={index} sx={{ mb: 2 }}>
                 <Card sx={{ p: 2 }}>
                   <Typography>{q.questionText}</Typography>
