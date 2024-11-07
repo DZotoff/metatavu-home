@@ -241,7 +241,7 @@
     "saveButton": "Save & Submit Questionnaire",
     "preview": "Questionnaire preview",
     "is": "is",
-    "delete": "Delete Question",
+    "removeFromPreview": "Delete Question",
     "back": "Back",
     "description": "Description",
     "insertDescription": "Insert description",

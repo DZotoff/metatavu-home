@@ -325,7 +325,7 @@ export interface Localized extends LocalizedStringsMethods {
     saveButton: string;
     preview: string;
     is: string;
-    delete: string;
+    removeFromPreview: string;
     back: string;
     description: string;
     insertDescription: string;

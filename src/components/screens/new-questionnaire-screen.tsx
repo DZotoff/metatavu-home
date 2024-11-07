@@ -73,7 +73,7 @@ const NewQuestionnaireScreen = () => {
    * Function to delete question from the questionnaire that is being built
    * @param index
    */
-  const handleDeleteQuestion = (index: number) => {
+  const removeQuestionFromPreview = (index: number) => {
     const updatedQuestions = [...options];
     updatedQuestions.splice(index, 1);
     setOptions(updatedQuestions);
@@ -257,10 +257,10 @@ const NewQuestionnaireScreen = () => {
                   <Button
                     variant="contained"
                     color="secondary"
-                    onClick={() => handleDeleteQuestion(index)}
+                    onClick={() => removeQuestionFromPreview(index)}
                   >
                     <DeleteForeverIcon sx={{ color: "red", mr: 2 }} />
-                    {strings.newQuestionnaireScreen.delete}
+                    {strings.newQuestionnaireScreen.removeFromPreview}
                   </Button>
                 </Card>
               </Grid>

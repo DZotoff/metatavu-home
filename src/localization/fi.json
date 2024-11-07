@@ -241,7 +241,7 @@
     "saveButton": "Tallenna uusi kysely",
     "preview": "Kyselyiden esikatselu",
     "is": "on",
-    "delete": "Poista kysymys",
+    "removeFromPreview": "Poista kysymys",
     "back": "Takaisin",
     "description": "Kuvaus",
     "insertDescription": "Syötä kuvaus kyselystä tähän",
