@@ -27,7 +27,7 @@ import { errorAtom } from "src/atoms/error";
  */
 const QuestionnaireTable = () => {
   const adminMode = UserRoleUtils.adminMode();
-  const { questionnaireApi } = useLambdasApi();
+  const { questionnairesApi } = useLambdasApi();
   const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([]);
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -39,7 +39,7 @@ const QuestionnaireTable = () => {
     const fetchQuestionnaires = async () => {
       setLoading(true);
       try {
-        const questionnaires = await questionnaireApi.listQuestionnaires();
+        const questionnaires = await questionnairesApi.listQuestionnaires();
         setQuestionnaires(questionnaires);
       } catch (error) {
         setError(`${strings.error.questionnaireLoadFailed}, ${error}`);
@@ -77,7 +77,7 @@ const QuestionnaireTable = () => {
       return;
     setLoading(true);
     try {
-      await questionnaireApi.deleteQuestionnaire({ id: deleteId });
+      await questionnairesApi.deleteQuestionnaires({ id: deleteId });
       setQuestionnaires((prevQuestionnaires: Questionnaire[]) =>
         prevQuestionnaires.filter((questionnaire: Questionnaire) => questionnaire.id !== deleteId)
       );
