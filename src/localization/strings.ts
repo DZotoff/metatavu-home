@@ -46,6 +46,8 @@ export interface Localized extends LocalizedStringsMethods {
     fetchFailedGeneral: string;
     fetchFailedNoEntriesGeneral: string;
     fetchSlackAvatarsFailed: string;
+    questionnaireLoadFailed: string;
+    questionnaireDeleteFailed: string;
   };
   /**
    * Translations related to localization
@@ -309,9 +311,6 @@ export interface Localized extends LocalizedStringsMethods {
   questionnaireScreen: {
     currentQuestionnaires: string;
     buildNewQuestionnaire: string;
-    status: string;
-    edit: string;
-    delete: string;
     back: string;
   };
   /**
@@ -337,7 +336,21 @@ export interface Localized extends LocalizedStringsMethods {
     answerLabel: string;
     addAnswer: string;
     saveAnswer: string;
-  }
+  };
+  /**
+   * Translations related to Questionnaire Table
+   */ 
+  questionnaireTable: {
+    title: string;
+    description: string;
+    actions: string;
+    edit: string;
+    delete: string;
+    status: string;
+    confirmDeleteTitle: string;
+    cancel: string;
+    confirm: string;
+  }; 
 }
 
 /**
