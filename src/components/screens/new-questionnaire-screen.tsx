@@ -42,6 +42,7 @@ const NewQuestionnaireScreen = () => {
 
   /**
    * Function to handle input change in the questionnaire title and description
+   * 
    * @param event
    */
   const handleQuestionnaireInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -54,6 +55,7 @@ const NewQuestionnaireScreen = () => {
 
   /**
    * Function to handle slider that pass value about what is the minimum score to pass the questionnaire
+   * 
    * @param event
    * @param value number
    */
@@ -66,6 +68,7 @@ const NewQuestionnaireScreen = () => {
 
   /**
    * Functions to add new question to Questionnaire that is being built
+   * 
    * @param questionText string
    * @param list of QuestionOptions
    */
@@ -81,6 +84,7 @@ const NewQuestionnaireScreen = () => {
 
   /**
    * Function to delete question from the questionnaire that is being built
+   * 
    * @param index
    */
   const removeQuestionFromPreview = (index: number) => {
@@ -95,7 +99,7 @@ const NewQuestionnaireScreen = () => {
    */
   const countCorrectAnswers = () => {
     return questionnaire.options.reduce((count, question) => {
-      return count + question.options.filter((option) => option.value === true).length;
+      return count + (question.options?.filter((option) => option.value === true).length || 0);
     }, 0);
   };
 
@@ -257,12 +261,12 @@ const NewQuestionnaireScreen = () => {
                 <Card sx={{ p: 2 }}>
                   <Typography>{q.questionText}</Typography>
                   <List component="ol">
-                    {q.options.map((option, idx) => (
+                    {q.options?.map((option, idx) => (
                       <ListItem component="li" key={idx}>
                         <ListItemText
                           primary={`${option.label} ${
                             strings.newQuestionnaireScreen.is
-                          } ${option.value.toString()}`}
+                          } ${option.value?.toString() || "false"}`}
                         />
                       </ListItem>
                     ))}

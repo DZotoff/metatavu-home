@@ -22,6 +22,7 @@ interface Props {
 
 /**
  * New Questionnaire Card Component
+ * 
  * @params handleAddQuestion
  */
 const NewQuestionnaireCard = ({ handleAddQuestion }: Props) => {
@@ -30,6 +31,7 @@ const NewQuestionnaireCard = ({ handleAddQuestion }: Props) => {
 
   /**
    * Handle options label (answer option) change
+   * 
    * @param index
    */
   const handleAnswerLabelChange = (
@@ -43,6 +45,7 @@ const NewQuestionnaireCard = ({ handleAddQuestion }: Props) => {
 
   /**
    * Handle options value change (checkbox)
+   * 
    * @param index
    */
   const handleCheckboxChange = (index: number) => {
