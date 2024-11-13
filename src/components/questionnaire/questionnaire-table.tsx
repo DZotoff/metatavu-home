@@ -4,8 +4,6 @@ import {
   CircularProgress,
   Dialog,
   DialogActions,
-  DialogContent,
-  DialogContentText,
   DialogTitle
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
@@ -92,10 +90,7 @@ const QuestionnaireTable = () => {
    */
   const renderConfirmDeleteDialog = () => (
     <Dialog open={dialogOpen} onClose={handleCloseDialog}>
-      <DialogTitle>{strings.questionnaireTable.confirmDeleteTitle}</DialogTitle>
-      <DialogContent>
-        <DialogContentText>{deleteTitle}</DialogContentText>
-      </DialogContent>
+      <DialogTitle>{strings.formatString(strings.questionnaireTable.confirmDeleteTitle, deleteTitle ?? "")}</DialogTitle>
       <DialogActions>
         <Button onClick={handleCloseDialog} color="primary">
           {strings.questionnaireTable.cancel}

@@ -30,8 +30,8 @@
     "fetchFailedGeneral": "There was an error fetching data",
     "fetchFailedNoEntriesGeneral": "No time entries found",
     "fetchSlackAvatarsFailed": "Error while fetching Slack avatars",
-    "questionnaireLoadFailed": "Questionnaire loading failed",
-    "questionnaireDeleteFailed": "Questionnaire deletion failed"
+    "questionnaireLoadFailed": "Error while loading questionnaires",
+    "questionnaireDeleteFailed": "Error while deleting questionnaire"
   },
   "localization": {
     "en": "EN",
@@ -260,7 +260,7 @@
     "edit": "Edit",
     "delete": "Delete",
     "status": "Status",
-    "confirmDeleteTitle": "Are you sure you want to delete?",
+    "confirmDeleteTitle": "Delete {0}?",
     "cancel": "Cancel",
     "confirm": "Confirm Delete"
 

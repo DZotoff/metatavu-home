@@ -260,7 +260,7 @@
     "edit": "Muokkaa",
     "delete": "Poista",
     "status": "Tila",
-    "confirmDeleteTitle": "Oletko varma, että haluat poista?",
+    "confirmDeleteTitle": "Poista {0}?",
     "cancel": "Peruuta",
     "confirm": "Vahvista poisto"
   }
