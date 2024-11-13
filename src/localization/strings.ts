@@ -46,6 +46,7 @@ export interface Localized extends LocalizedStringsMethods {
     fetchFailedGeneral: string;
     fetchFailedNoEntriesGeneral: string;
     fetchSlackAvatarsFailed: string;
+    questionnaireSaveFailed: string;
     questionnaireLoadFailed: string;
     questionnaireDeleteFailed: string;
   };
@@ -323,8 +324,12 @@ export interface Localized extends LocalizedStringsMethods {
     saveButton: string;
     preview: string;
     is: string;
-    delete: string;
+    removeFromPreview: string;
     back: string;
+    description: string;
+    insertDescription: string;
+    countedAnswers: string;
+    requiredAnswers: string;
   };
   /**
    * Translations related to New Questionnaire Card

@@ -30,6 +30,7 @@
     "fetchFailedGeneral": "Tietojen hakeminen epäonnistui",
     "fetchFailedNoEntriesGeneral": "Ei aikatietoja saatavilla",
     "fetchSlackAvatarsFailed": "Virhe Slack-avatareita pyydettäessä",
+    "questionnaireSaveFailed": "Kyselylomakkeen tallentaminen epäonnistui",
     "questionnaireLoadFailed": "Kyselylomakkeiden lataaminen epäonnistui",
     "questionnaireDeleteFailed": "Kyselylomakkeen poistaminen epäonnistui"
   },
@@ -242,8 +243,12 @@
     "saveButton": "Tallenna uusi kysely",
     "preview": "Kyselyiden esikatselu",
     "is": "on",
-    "delete": "Poista kysymys",
-    "back": "Takaisin"
+    "removeFromPreview": "Poista kysymys",
+    "back": "Takaisin",
+    "description": "Kuvaus",
+    "insertDescription": "Syötä kuvaus kyselystä tähän",
+    "countedAnswers": "Oikeiden vastausten määrä tässä kyselyssä:",
+    "requiredAnswers": "Montako pitää olla oikein, jotta kysely menee läpi:"
   },
   "newQuestionnaireCard": {
     "newQuestion": "Haluatko lisätä uuden kysymyksen, lisää tiedot alle.",

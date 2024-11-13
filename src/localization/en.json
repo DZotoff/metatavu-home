@@ -31,7 +31,8 @@
     "fetchFailedNoEntriesGeneral": "No time entries found",
     "fetchSlackAvatarsFailed": "Error while fetching Slack avatars",
     "questionnaireLoadFailed": "Error while loading questionnaires",
-    "questionnaireDeleteFailed": "Error while deleting questionnaire"
+    "questionnaireDeleteFailed": "Error while deleting questionnaire",
+    "questionnaireSaveFailed": "Error while saving questionnaire"
   },
   "localization": {
     "en": "EN",
@@ -242,8 +243,12 @@
     "saveButton": "Save & Submit Questionnaire",
     "preview": "Questionnaire preview",
     "is": "is",
-    "delete": "Delete Question",
-    "back": "Back"
+    "removeFromPreview": "Delete Question",
+    "back": "Back",
+    "description": "Description",
+    "insertDescription": "Insert description",
+    "countedAnswers": "Cumulative amount of true values in this Questionnaire:",
+    "requiredAnswers": "Set required correct answers:"
   },
   "newQuestionnaireCard": {
     "newQuestion": "Want to add a new question? Fill in the details below.",
