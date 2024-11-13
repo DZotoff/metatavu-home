@@ -30,6 +30,8 @@
     "fetchFailedGeneral": "There was an error fetching data",
     "fetchFailedNoEntriesGeneral": "No time entries found",
     "fetchSlackAvatarsFailed": "Error while fetching Slack avatars",
+    "questionnaireLoadFailed": "Error while loading questionnaires",
+    "questionnaireDeleteFailed": "Error while deleting questionnaire",
     "questionnaireSaveFailed": "Error while saving questionnaire"
   },
   "localization": {
@@ -255,5 +257,17 @@
     "answerLabel": "Insert Answer",
     "addAnswer": "+ Add new answer option",
     "saveAnswer": "Save question"
+  },
+  "questionnaireTable": {
+    "title": "Questionnaire Title",
+    "description": "Description",
+    "actions": "Actions",
+    "edit": "Edit",
+    "delete": "Delete",
+    "status": "Status",
+    "confirmDeleteTitle": "Delete {0}?",
+    "cancel": "Cancel",
+    "confirm": "Confirm Delete"
+
   }
 }

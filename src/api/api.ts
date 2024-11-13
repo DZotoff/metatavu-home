@@ -16,9 +16,8 @@ import {
   TasksApi,
   TimeEntriesApi,
   UsersApi,
-  QuestionnairesApi 
+  QuestionnairesApi
 } from "../generated/homeLambdasClient";
-
 
 /**
  * Generic type that accepts parameters within the @ConfigurationParameters interface
