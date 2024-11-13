@@ -131,6 +131,7 @@ const QuestionnaireTable = () => {
           field: "status",
           headerName: `${strings.questionnaireTable.status}`,
           flex: 1,
+          TODO: "Here we should render the status of the questionnaire: Users should be able to see if they have completed the questionnaire or not. Admin should be able to see the status of each questionnaire, including the number of employees who have already passed the current questionnaire."
         }
   ];
 
