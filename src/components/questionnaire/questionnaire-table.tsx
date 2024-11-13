@@ -10,8 +10,6 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect } from "react";
 import type { Questionnaire } from "src/generated/homeLambdasClient";
 import strings from "src/localization/strings";
@@ -23,6 +21,7 @@ import { errorAtom } from "src/atoms/error";
 
 /**
  * Questionnaire Table Component
+ *
  * @returns Questionnaires from DynamoDB rendered in a x-data-grid table
  */
 const QuestionnaireTable = () => {
@@ -51,6 +50,7 @@ const QuestionnaireTable = () => {
 
   /**
    * Function to open the dialog for deleting the questionnaire
+   *
    * @param id - Questionnaire ID
    * @param title - Questionnaire Title
    */
@@ -60,9 +60,9 @@ const QuestionnaireTable = () => {
     setDialogOpen(true);
   };
 
-/**
- * Function to close the dialog for deleting the questionnaire
- */
+  /**
+   * Function to close the dialog for deleting the questionnaire
+   */
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setDeleteId(null);
@@ -73,8 +73,7 @@ const QuestionnaireTable = () => {
    * Function to delete the questionnaire
    */
   const handleConfirmDelete = async () => {
-    if (!deleteId) 
-      return;
+    if (!deleteId) return;
     setLoading(true);
     try {
       await questionnairesApi.deleteQuestionnaires({ id: deleteId });
@@ -85,31 +84,28 @@ const QuestionnaireTable = () => {
     } catch (error) {
       setError(`${strings.error.questionnaireDeleteFailed}, ${error}`);
     }
-      setLoading(false);
-    
+    setLoading(false);
   };
 
   /**
    * Function to render the confirm delete dialog
    */
-  const renderConfirmDeleteDialog = () => {
-    return (
-<Dialog open={dialogOpen} onClose={handleCloseDialog}>
-        <DialogTitle>{strings.questionnaireTable.confirmDeleteTitle}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>{deleteTitle}</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            {strings.questionnaireTable.cancel}
-          </Button>
-          <Button onClick={handleConfirmDelete} color="secondary" variant="contained">
-            {strings.questionnaireTable.confirm}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  };
+  const renderConfirmDeleteDialog = () => (
+    <Dialog open={dialogOpen} onClose={handleCloseDialog}>
+      <DialogTitle>{strings.questionnaireTable.confirmDeleteTitle}</DialogTitle>
+      <DialogContent>
+        <DialogContentText>{deleteTitle}</DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleCloseDialog} color="primary">
+          {strings.questionnaireTable.cancel}
+        </Button>
+        <Button onClick={handleConfirmDelete} color="secondary" variant="contained">
+          {strings.questionnaireTable.confirm}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 
   const columns = [
     { field: "title", headerName: `${strings.questionnaireTable.title}`, flex: 3 },
@@ -140,13 +136,6 @@ const QuestionnaireTable = () => {
           field: "status",
           headerName: `${strings.questionnaireTable.status}`,
           flex: 1,
-          FIXME: "This should be checking if loggedInUser.id is in passedUsers array",
-          // renderCell: (params: GridRenderCellParams) =>
-          //   params.row.passedUsers && params.row.passedUsers.lenght > 0 ? (
-          //     <CheckCircleIcon sx={{ color: "green" }} />
-          //   ) : (
-          //     <CloseIcon sx={{ color: "red" }} />
-          //   )
         }
   ];
 
