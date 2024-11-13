@@ -19,7 +19,7 @@ import { Link } from "react-router-dom";
 import NewQuestionnaireCard from "../questionnaire/new-questionnaire-card";
 import { KeyboardReturn } from "@mui/icons-material";
 import UserRoleUtils from "src/utils/user-role-utils";
-import type { Questionnaire, QuestionOption } from "src/types/index";
+import type { Questionnaire, Options } from "src/generated/homeLambdasClient";
 import strings from "src/localization/strings";
 import { useLambdasApi } from "src/hooks/use-api";
 import { useSetAtom } from "jotai";
@@ -69,7 +69,7 @@ const NewQuestionnaireScreen = () => {
    * @param questionText string
    * @param list of QuestionOptions
    */
-  const handleAddQuestion = (questionText: string, options: QuestionOption[]) => {
+  const handleAddQuestion = (questionText: string, options: Options[]) => {
     setQuestionnaire((prevQuestionnaire) => ({
       ...prevQuestionnaire,
       options: [

@@ -167,21 +167,3 @@ export interface QuestionOption {
   label: string;
   value: boolean;
 }
-
-/**
- * Type describing a question with text and options in New Questionnaire Screen
- */
-export interface Question {
-  questionText: string;
-  options: QuestionOption[];
-}
-
-/**
- * Type describing a questionnaire in New Questionnaire Screen
- */
-export interface Questionnaire {
-  title: string;
-  description: string;
-  options: Question[];
-  passScore: number;
-}

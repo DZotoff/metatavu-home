@@ -12,7 +12,6 @@ import {
 import type React from "react";
 import { useState } from "react";
 import strings from "src/localization/strings";
-import type { QuestionOption } from "src/types/index";
 
 /**
  * Interface for the NewQuestionnaireCard component
@@ -27,7 +26,7 @@ interface Props {
  */
 const NewQuestionnaireCard = ({ handleAddQuestion }: Props) => {
   const [questionText, setQuestionText] = useState("");
-  const [options, setOptions] = useState<QuestionOption[]>([{ label: "", value: false }]);
+  const [options, setOptions] = useState([{ label: "", value: false }]);
 
   /**
    * Handle options label (answer option) change
