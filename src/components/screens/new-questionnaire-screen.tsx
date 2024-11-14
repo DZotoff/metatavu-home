@@ -161,6 +161,7 @@ const NewQuestionnaireScreen = () => {
             onChange={handleQuestionnaireInputChange}
             variant="outlined"
             fullWidth
+            required
             sx={{ mt: 2, mb: 2 }}
           />
           <TextField
@@ -171,6 +172,7 @@ const NewQuestionnaireScreen = () => {
             onChange={handleQuestionnaireInputChange}
             variant="outlined"
             fullWidth
+            required
             sx={{ mt: 2, mb: 4 }}
           />
           <NewQuestionnaireCard handleAddQuestion={handleAddQuestion} />
