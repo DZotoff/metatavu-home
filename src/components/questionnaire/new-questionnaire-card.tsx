@@ -17,7 +17,7 @@ import strings from "src/localization/strings";
  * Interface for the NewQuestionnaireCard component
  */
 interface Props {
-  handleAddQuestion: (question: string, options: { label: string; value: boolean }[]) => void;
+  handleAddQuestion: (questionText: string, answerOptions: { label: string; isCorrect: boolean }[]) => void;
 }
 
 /**
@@ -65,7 +65,7 @@ const NewQuestionnaireCard = ({ handleAddQuestion }: Props) => {
    * Handle adding new question (submitting the question and options + resetting the form)
    */
   const handleAddNewQuestion = () => {
-    handleAddQuestion(questionText, options);
+    handleAddQuestion(questionText, answerOptions);
     setQuestionText("");
     setOptions([{ label: "", value: false }]);
   };

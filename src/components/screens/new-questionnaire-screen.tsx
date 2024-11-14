@@ -19,7 +19,7 @@ import { Link } from "react-router-dom";
 import NewQuestionnaireCard from "../questionnaire/new-questionnaire-card";
 import { KeyboardReturn } from "@mui/icons-material";
 import UserRoleUtils from "src/utils/user-role-utils";
-import type { Questionnaire, Options } from "src/generated/homeLambdasClient";
+import type { Questionnaire, Question, AnswerOption } from "src/generated/homeLambdasClient";
 import strings from "src/localization/strings";
 import { useLambdasApi } from "src/hooks/use-api";
 import { useSetAtom } from "jotai";
@@ -36,7 +36,7 @@ const NewQuestionnaireScreen = () => {
   const [questionnaire, setQuestionnaire] = useState<Questionnaire>({
     title: "",
     description: "",
-    options: [],
+    questions: [],
     passScore: 0
   });
 
@@ -72,12 +72,12 @@ const NewQuestionnaireScreen = () => {
    * @param questionText string
    * @param list of QuestionOptions
    */
-  const handleAddQuestion = (questionText: string, options: Options[]) => {
+  const handleAddQuestion = (questionText: string, answerOptions: AnswerOption[]) => {
     setQuestionnaire((prevQuestionnaire) => ({
       ...prevQuestionnaire,
-      options: [
-        ...prevQuestionnaire.options,
-        { questionText, options }
+      answerOptions: [
+        ...prevQuestionnaire.questions,
+        { questionText, answerOptions }
       ]
     }));
   };
@@ -90,7 +90,7 @@ const NewQuestionnaireScreen = () => {
   const removeQuestionFromPreview = (index: number) => {
     setQuestionnaire((prevQuestionnaire) => ({
       ...prevQuestionnaire,
-      options: prevQuestionnaire.options.filter((_, i) => i !== index)
+      answerOptions: prevQuestionnaire.questions.filter((_, i) => i !== index)
     }));
   };
 
@@ -98,8 +98,8 @@ const NewQuestionnaireScreen = () => {
    * Function to count all correct answers in the questionnaire, used for passScore determination
    */
   const countCorrectAnswers = () => {
-    return questionnaire.options.reduce((count, question) => {
-      return count + (question.options?.filter((option) => option.value === true).length || 0);
+    return questionnaire.questions.reduce((count, question) => {
+      return count + (question.answerOptions?.filter((option) => option.isCorrect === true).length || 0);
     }, 0);
   };
 
@@ -110,7 +110,7 @@ const NewQuestionnaireScreen = () => {
     setQuestionnaire({
       title: "",
       description: "",
-      options: [],
+      questions: [],
       passScore: 0
     });
     setLoading(false);
@@ -126,7 +126,7 @@ const NewQuestionnaireScreen = () => {
         questionnaire: {
           title: questionnaire.title,
           description: questionnaire.description,
-          options: questionnaire.options,
+          questions: questionnaire.questions,
           passScore: questionnaire.passScore
         }
       });
@@ -237,7 +237,7 @@ const NewQuestionnaireScreen = () => {
           </Button>
         </Link>
       </Card>
-      {/* Card containing questions preview */}
+      {/* Card containing answerOptions preview */}
       <Card
         sx={{
           p: 2,
@@ -258,17 +258,17 @@ const NewQuestionnaireScreen = () => {
             <Typography variant="h5" gutterBottom>
               {questionnaire.title}
             </Typography>
-            {questionnaire.options.map((q, index) => (
+            {questionnaire.questions.map((q, index) => (
               <Grid item xs={12} key={index} sx={{ mb: 2 }}>
                 <Card sx={{ p: 2 }}>
                   <Typography>{q.questionText}</Typography>
                   <List component="ol">
-                    {q.options?.map((option, idx) => (
+                    {q.answerOptions?.map((option, idx) => (
                       <ListItem component="li" key={idx}>
                         <ListItemText
                           primary={`${option.label} ${
                             strings.newQuestionnaireScreen.is
-                          } ${option.value?.toString() || "false"}`}
+                          } ${option.isCorrect?.toString() || "false"}`}
                         />
                       </ListItem>
                     ))}
