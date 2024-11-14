@@ -129,6 +129,7 @@ const NewQuestionnaireCard = ({ handleAddQuestion }: Props) => {
                   id="textfield-answer-option"
                   variant="outlined"
                   label={strings.newQuestionnaireCard.answerLabel}
+                  placeholder={strings.newQuestionnaireCard.insertAnswerLabel}
                   value={option.label}
                   onChange={(e) => handleAnswerLabelChange(index, e)}
                   fullWidth

@@ -339,6 +339,7 @@ export interface Localized extends LocalizedStringsMethods {
     questionLabel: string;
     correctAnswer: string;
     answerLabel: string;
+    insertAnswerLabel: string;
     addAnswer: string;
     saveAnswer: string;
   };

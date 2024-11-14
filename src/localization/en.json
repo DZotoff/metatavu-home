@@ -239,7 +239,7 @@
   "newQuestionnaireScreen": {
     "makeNewQuestionnaire": "Make a New Questionnaire",
     "title": "Title",
-    "insertTitle": "Insert Title Here",
+    "insertTitle": "Insert title",
     "saveButton": "Save & Submit Questionnaire",
     "preview": "Questionnaire preview",
     "is": "is",
@@ -251,15 +251,16 @@
     "requiredAnswers": "Set required correct answers:"
   },
   "newQuestionnaireCard": {
-    "newQuestion": "Want to add a new question? Fill in the details below.",
+    "newQuestion": "Add a new question.",
     "questionLabel": "Question",
-    "correctAnswer": "Check the correct answer(s) below.",
-    "answerLabel": "Insert Answer",
+    "correctAnswer": "Check the correct answer(s).",
+    "answerLabel": "Answer option",
+    "insertAnswerLabel": "Insert answer option",
     "addAnswer": "+ Add new answer option",
     "saveAnswer": "Save question"
   },
   "questionnaireTable": {
-    "title": "Questionnaire Title",
+    "title": "Title",
     "description": "Description",
     "actions": "Actions",
     "edit": "Edit",
