@@ -27,10 +27,10 @@ interface Props {
  */
 const NewQuestionnaireCard = ({ handleAddQuestion }: Props) => {
   const [questionText, setQuestionText] = useState("");
-  const [options, setOptions] = useState([{ label: "", value: false }]);
+  const [answerOptions, setAnswerOptions] = useState([{ label: "", isCorrect: false }]);
 
   /**
-   * Handle options label (answer option) change
+   * Handle answerOptions label (answer option) change
    * 
    * @param index
    */
@@ -38,36 +38,36 @@ const NewQuestionnaireCard = ({ handleAddQuestion }: Props) => {
     index: number,
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const updatedOptions = [...options];
-    updatedOptions[index].label = event.target.value;
-    setOptions(updatedOptions);
+    const updatedAnswerOptions = [...answerOptions];
+    updatedAnswerOptions[index].label = event.target.value;
+    setAnswerOptions(updatedAnswerOptions);
   };
 
   /**
-   * Handle options value change (checkbox)
+   * Handle answerOptions value change (checkbox)
    * 
    * @param index
    */
   const handleCheckboxChange = (index: number) => {
-    const updatedOptions = [...options];
-    updatedOptions[index].value = !updatedOptions[index].value;
-    setOptions(updatedOptions);
+    const updatedAnswerOptions = [...answerOptions];
+    updatedAnswerOptions[index].isCorrect = !updatedAnswerOptions[index].isCorrect;
+    setAnswerOptions(updatedAnswerOptions);
   };
 
   /**
    * Handle adding a new option (adds an empty option to the list)
    */
   const handleAddNewOption = () => {
-    setOptions([...options, { label: "", value: false }]);
+    setAnswerOptions([...answerOptions, { label: "", isCorrect: false }]);
   };
 
   /**
-   * Handle adding new question (submitting the question and options + resetting the form)
+   * Handle adding new question (submitting the question and answerOptions + resetting the form)
    */
   const handleAddNewQuestion = () => {
     handleAddQuestion(questionText, answerOptions);
     setQuestionText("");
-    setOptions([{ label: "", value: false }]);
+    setAnswerOptions([{ label: "", isCorrect: false }]);
   };
 
   return (
@@ -98,7 +98,7 @@ const NewQuestionnaireCard = ({ handleAddQuestion }: Props) => {
           <Typography variant="body1" sx={{ mt: 2 }}>
             {strings.newQuestionnaireCard.correctAnswer}
           </Typography>
-          {options.map((option, index) => (
+          {answerOptions.map((option, index) => (
             <Box
               key={index}
               sx={{
@@ -110,7 +110,7 @@ const NewQuestionnaireCard = ({ handleAddQuestion }: Props) => {
             >
               <Box sx={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
                 <Checkbox
-                  checked={option.value}
+                  checked={option.isCorrect}
                   onChange={() => handleCheckboxChange(index)}
                   name={`option-${index + 1}`}
                   color="success"
