@@ -144,7 +144,14 @@ const NewQuestionnaireCard = ({ handleAddQuestion }: Props) => {
             </Typography>
           </Button>
           <CardActionArea>
-            <CardActions>
+            <CardActions
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                width: "100%",
+                p: 2
+              }}
+            >
               <Button size="large" variant="contained" onClick={handleAddNewQuestion}>
                 {strings.newQuestionnaireCard.saveAnswer}
               </Button>

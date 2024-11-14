@@ -240,7 +240,7 @@
     "makeNewQuestionnaire" : "Tee uusi kysely",
     "title": "Otsikko",
     "insertTitle": "Syötä otsikko",
-    "saveButton": "Tallenna uusi kysely",
+    "saveButton": "Tallenna kysely",
     "preview": "Kyselyiden esikatselu",
     "is": "on",
     "removeFromPreview": "Poista kysymys",
