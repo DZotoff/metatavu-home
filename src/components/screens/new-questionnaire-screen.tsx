@@ -72,10 +72,10 @@ const NewQuestionnaireScreen = () => {
    * @param questionText string
    * @param list of QuestionOptions
    */
-  const handleAddQuestion = (questionText: string, answerOptions: AnswerOption[]) => {
+  const handleAddQuestion = ({ questionText, answerOptions }: { questionText: string; answerOptions: AnswerOption[] }) => {
     setQuestionnaire((prevQuestionnaire) => ({
       ...prevQuestionnaire,
-      answerOptions: [
+      questions: [
         ...prevQuestionnaire.questions,
         { questionText, answerOptions }
       ]

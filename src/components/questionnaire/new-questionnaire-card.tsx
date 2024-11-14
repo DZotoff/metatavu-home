@@ -11,13 +11,14 @@ import {
 } from "@mui/material";
 import type React from "react";
 import { useState } from "react";
+import type { AnswerOption } from "src/generated/homeLambdasClient";
 import strings from "src/localization/strings";
 
 /**
  * Interface for the NewQuestionnaireCard component
  */
 interface Props {
-  handleAddQuestion: (questionText: string, answerOptions: { label: string; isCorrect: boolean }[]) => void;
+  handleAddQuestion: ({ questionText, answerOptions }: { questionText: string; answerOptions: AnswerOption[] }) => void;
 }
 
 /**
@@ -65,7 +66,7 @@ const NewQuestionnaireCard = ({ handleAddQuestion }: Props) => {
    * Handle adding new question (submitting the question and answerOptions + resetting the form)
    */
   const handleAddNewQuestion = () => {
-    handleAddQuestion(questionText, answerOptions);
+    handleAddQuestion({ questionText, answerOptions });
     setQuestionText("");
     setAnswerOptions([{ label: "", isCorrect: false }]);
   };
