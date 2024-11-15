@@ -15,11 +15,11 @@ import {
 } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useState, type ChangeEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import NewQuestionnaireCard from "../questionnaire/new-questionnaire-card";
 import { KeyboardReturn } from "@mui/icons-material";
 import UserRoleUtils from "src/utils/user-role-utils";
-import type { Questionnaire, Question, AnswerOption } from "src/generated/homeLambdasClient";
+import type { Questionnaire, AnswerOption } from "src/generated/homeLambdasClient";
 import strings from "src/localization/strings";
 import { useLambdasApi } from "src/hooks/use-api";
 import { useSetAtom } from "jotai";
@@ -30,6 +30,7 @@ import { errorAtom } from "src/atoms/error";
  */
 const NewQuestionnaireScreen = () => {
   const adminMode = UserRoleUtils.adminMode();
+  const navigate = useNavigate();
   const { questionnairesApi } = useLambdasApi();
   const [loading, setLoading] = useState(false);
   const setError = useSetAtom(errorAtom);
@@ -131,9 +132,11 @@ const NewQuestionnaireScreen = () => {
         }
       });
       closeAndClear();
+      navigate(-1)
       return createdQuestionnaire;
     } catch (error) {
       setError(`${strings.error.questionnaireSaveFailed}, ${error}`);
+      setLoading(false);
     }
   };
 
