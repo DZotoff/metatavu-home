@@ -199,7 +199,7 @@ const NewQuestionnaireScreen = () => {
               width: "100%"
             }}
           >
-            <Box sx={{ display: "flex", flexDirection: "column", width: "70%", mr: 0 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", width: "70%", mr: 4 }}>
               <Typography
                 variant="h6"
                 gutterBottom
@@ -218,7 +218,7 @@ const NewQuestionnaireScreen = () => {
                 min={0}
                 max={countCorrectAnswers()}
                 valueLabelDisplay="auto"
-                sx={{ mt: 1, width: "70%" }}
+                sx={{ mt: 1, mb:1, width: "70%" }}
               />
             </Box>
             <Button
