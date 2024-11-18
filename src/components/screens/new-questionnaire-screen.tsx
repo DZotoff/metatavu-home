@@ -179,7 +179,17 @@ const NewQuestionnaireScreen = () => {
             sx={{ mt: 2, mb: 4 }}
           />
           <NewQuestionnaireCard handleAddQuestion={handleAddQuestion} />
-          <CardActions
+          <Card
+          sx={{
+            p: 2,
+            mt: 4,
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            height: "100"
+          }}
+          >
+            <CardActions
             sx={{
               display: "flex",
               justifyContent: "flex-end",
@@ -189,11 +199,11 @@ const NewQuestionnaireScreen = () => {
               width: "100%"
             }}
           >
-            <Box sx={{ display: "flex", flexDirection: "column", width: "75%", mr: 2 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", width: "70%", mr: 0 }}>
               <Typography
                 variant="h6"
                 gutterBottom
-                sx={{ display: "flex", alignItems: "center", mb: 1, mt: 3 }}
+                sx={{ display: "flex", alignItems: "center", mb: 1, mt: 1 }}
               >
                 {strings.newQuestionnaireScreen.countedAnswers} {countCorrectAnswers()}
               </Typography>
@@ -212,7 +222,7 @@ const NewQuestionnaireScreen = () => {
               />
             </Box>
             <Button
-              sx={{ display: "flex", alignItems: "center", mt: 8 }}
+              sx={{ display: "flex", alignItems: "center", mt: 6, mr: 4 }}
               id="save-submit"
               size="large"
               variant="contained"
@@ -226,19 +236,9 @@ const NewQuestionnaireScreen = () => {
                 strings.newQuestionnaireScreen.saveButton
               )}
             </Button>
-          </CardActions>
+            </CardActions>
+          </Card>
         </CardContent>
-      </Card>
-      <Card sx={{ mt: 2, width: "100%" }}>
-        <Link
-          to={adminMode ? "/admin/questionnaire" : "/questionnaire"}
-          style={{ textDecoration: "none" }}
-        >
-          <Button variant="contained" sx={{ p: 2, width: "100%" }}>
-            <KeyboardReturn sx={{ marginRight: "10px" }} />
-            <Typography>{strings.newQuestionnaireScreen.back}</Typography>
-          </Button>
-        </Link>
       </Card>
       {/* Card containing answerOptions preview */}
       <Card
@@ -289,6 +289,18 @@ const NewQuestionnaireScreen = () => {
             ))}
           </Grid>
         </CardContent>
+      </Card>
+      {/* Card containing back button */}
+      <Card sx={{ mt: 2, mb: 2, width: "100%" }}>
+        <Link
+          to={adminMode ? "/admin/questionnaire" : "/questionnaire"}
+          style={{ textDecoration: "none" }}
+        >
+          <Button variant="contained" sx={{ p: 2, width: "100%" }}>
+            <KeyboardReturn sx={{ marginRight: "10px" }} />
+            <Typography>{strings.newQuestionnaireScreen.back}</Typography>
+          </Button>
+        </Link>
       </Card>
     </>
   );
