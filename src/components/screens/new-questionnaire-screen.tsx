@@ -40,6 +40,7 @@ const NewQuestionnaireScreen = () => {
     questions: [],
     passScore: 0
   });
+  const checkBeforeSave = !questionnaire.title.trim() || !questionnaire.description.trim();
 
   /**
    * Function to handle input change in the questionnaire title and description
@@ -228,7 +229,7 @@ const NewQuestionnaireScreen = () => {
               variant="contained"
               color="success"
               onClick={saveQuestionnaire}
-              disabled={loading}
+              disabled={loading || checkBeforeSave}
             >
               {loading ? (
                 <CircularProgress size={24} color="inherit" />
