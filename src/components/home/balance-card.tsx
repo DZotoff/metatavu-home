@@ -1,50 +1,45 @@
-import { getHoursAndMinutes } from "src/utils/time-utils";
 import { Grid, Typography, Card, CardContent, Skeleton } from "@mui/material";
 import strings from "src/localization/strings";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import { errorAtom } from "src/atoms/error";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
-import { useApi } from "src/hooks/use-api";
-import { type Person, type PersonTotalTime, Timespan } from "src/generated/client";
-import { personsAtom, personTotalTimeAtom } from "src/atoms/person";
 import { Link } from "react-router-dom";
 import { userProfileAtom } from "src/atoms/auth";
-import config from "src/app/config";
 import UserRoleUtils from "src/utils/user-role-utils";
-import { theme } from "src/theme";
 import { DateTime } from "luxon";
+import { usersAtom } from "src/atoms/user";
+// import { type Flextime, FlexTimeApi } from "src/generated/homeLambdasClient";
+// import type { User } from "src/generated/homeLambdasClient";
+import { useLambdasApi } from "src/hooks/use-api";
 
 /**
  * Component for displaying user's balance
  */
 const BalanceCard = () => {
-  const persons = useAtomValue(personsAtom);
+  const users = useAtomValue(usersAtom);
   const userProfile = useAtomValue(userProfileAtom);
-  const { personsApi } = useApi();
   const setError = useSetAtom(errorAtom);
   const [loading, setLoading] = useState(false);
-  const [personTotalTime, setPersonTotalTime] = useAtom(personTotalTimeAtom);
   const adminMode = UserRoleUtils.adminMode();
+  const [usersFlextimes, setUsersFlextimes] = useState<Flextime[]>();
   const yesterday = DateTime.now().minus({ days: 1 });
 
   /**
-   * Initialize logged in person's time data.
+   * Initialize logged in users's time data.
    */
-  const getPersons = async () => {
+  const getUsersFlextimes = async () => {
     setLoading(true);
-    const loggedInPerson = persons.find(
-      (person: Person) =>
-        person.id === config.person.forecastUserIdOverride || person.keycloakId === userProfile?.id
+    const loggedInUser = users.find(
+      (users: User) =>
+        users.id === userProfile?.id
     );
-    if (loggedInPerson) {
+    if (loggedInUser) {
       try {
-        const fetchedPerson = await personsApi.listPersonTotalTime({
-          personId: loggedInPerson?.id,
-          timespan: Timespan.ALL_TIME,
-          before: yesterday.toJSDate()
+        const fetchedUsersFlextime = await flexTimeApi.getFlextimeBySeveraUserId({
+          severaUserId: severaUserId
         });
-        setPersonTotalTime(fetchedPerson[0]);
+        setUsersFlextimes([fetchedUsersFlextime]);
       } catch (error) {
         setError(`${strings.error.fetchFailedGeneral}, ${error}`);
       }
@@ -52,40 +47,19 @@ const BalanceCard = () => {
     setLoading(false);
   };
 
-  /**
-   * Get person total time if it is undefined or set to "all time"
-   */
   useEffect(() => {
-    if (!personTotalTime) {
-      getPersons();
+    if (users.length > 0 && userProfile) {
+      getUsersFlextimes();
     }
-  }, [persons]);
+  }, [users, userProfile]);
 
-  /**
-   * Renders person's total time
-   *
-   * @param personTotalTime PersonTotalTime
-   */
-  const renderPersonTotalTime = (personTotalTime: PersonTotalTime | undefined) => {
-    const balanceColor =
-      personTotalTime && personTotalTime.balance > 0
-        ? theme.palette.success.main
-        : theme.palette.error.main;
-
-    if (adminMode) {
-      return <Typography>{strings.placeHolder.notYetImplemented}</Typography>;
-    }
-    if (!personTotalTime && !loading && persons.length) {
-      return (
-        <Typography color={balanceColor}>{strings.error.fetchFailedNoEntriesGeneral}</Typography>
-      );
-    }
-    if (personTotalTime) {
-      return (
-        <Typography color={balanceColor}>{getHoursAndMinutes(personTotalTime.balance)}</Typography>
-      );
-    }
-    return <Skeleton />;
+  const renderUserFlextime = () => {
+    return (
+      <Typography variant="body1">
+        {usersFlextimes[0]?.totalFlextimeBalance || " No data"}
+        FIXME: Localization
+      </Typography>
+    );
   };
 
   return (
@@ -120,7 +94,7 @@ const BalanceCard = () => {
                 <ScheduleIcon style={{ marginTop: 1 }} />
               </Grid>
               <Grid item xs={11}>
-                {loading ? <Skeleton /> : renderPersonTotalTime(personTotalTime)}
+                {loading ? <Skeleton /> : renderUserFlextime()}
               </Grid>
             </Grid>
           </CardContent>
