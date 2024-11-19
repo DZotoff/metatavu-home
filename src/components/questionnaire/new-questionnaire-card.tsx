@@ -18,12 +18,15 @@ import strings from "src/localization/strings";
  * Interface for the NewQuestionnaireCard component
  */
 interface Props {
-  handleAddQuestion: ({ questionText, answerOptions }: { questionText: string; answerOptions: AnswerOption[] }) => void;
+  handleAddQuestion: ({
+    questionText,
+    answerOptions
+  }: { questionText: string; answerOptions: AnswerOption[] }) => void;
 }
 
 /**
  * New Questionnaire Card Component
- * 
+ *
  * @params handleAddQuestion
  */
 const NewQuestionnaireCard = ({ handleAddQuestion }: Props) => {
@@ -32,7 +35,7 @@ const NewQuestionnaireCard = ({ handleAddQuestion }: Props) => {
 
   /**
    * Handle answerOptions label (answer option) change
-   * 
+   *
    * @param index
    */
   const handleAnswerLabelChange = (
@@ -46,7 +49,7 @@ const NewQuestionnaireCard = ({ handleAddQuestion }: Props) => {
 
   /**
    * Handle answerOptions value change (checkbox)
-   * 
+   *
    * @param index
    */
   const handleCheckboxChange = (index: number) => {
@@ -139,25 +142,33 @@ const NewQuestionnaireCard = ({ handleAddQuestion }: Props) => {
               </Box>
             </Box>
           ))}
-          <Button onClick={handleAddNewOption} sx={{ mt: 3 }}>
-            <Typography sx={{ fontWeight: "bold", mb: 2 }}>
-              {strings.newQuestionnaireCard.addAnswer}
-            </Typography>
-          </Button>
-          <CardActionArea>
-            <CardActions
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                width: "100%",
-                p: 2
-              }}
+          <CardActions
+            sx={{
+              display: "flex",
+              width: "100%",
+              mt: 4,
+              justifyContent: "space-between"
+            }}
+          >
+            <Button
+              sx={{ alignItems: "center" }}
+              size="large"
+              variant="text"
+              onClick={handleAddNewOption}
             >
-              <Button size="large" variant="contained" onClick={handleAddNewQuestion}>
-                {strings.newQuestionnaireCard.saveAnswer}
-              </Button>
-            </CardActions>
-          </CardActionArea>
+              <Typography sx={{ fontWeight: "bold" }}>
+                {strings.newQuestionnaireCard.addAnswer}
+              </Typography>
+            </Button>
+            <Button
+              sx={{ alignItems: "center" }}
+              size="large"
+              variant="contained"
+              onClick={handleAddNewQuestion}
+            >
+              {strings.newQuestionnaireCard.saveAnswer}
+            </Button>
+          </CardActions>
         </CardContent>
       </Card>
     </>

@@ -11,10 +11,11 @@ import {
   ListItemText,
   Slider,
   TextField,
+  Tooltip,
   Typography
 } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { useState, type ChangeEvent } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import NewQuestionnaireCard from "../questionnaire/new-questionnaire-card";
 import { KeyboardReturn } from "@mui/icons-material";
@@ -34,30 +35,35 @@ const NewQuestionnaireScreen = () => {
   const { questionnairesApi } = useLambdasApi();
   const [loading, setLoading] = useState(false);
   const setError = useSetAtom(errorAtom);
+  const [tooltipMessage, setTooltipMessage] = useState<string>("");
+  const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [questionnaire, setQuestionnaire] = useState<Questionnaire>({
     title: "",
     description: "",
     questions: [],
     passScore: 0
   });
-  const checkBeforeSave = !questionnaire.title.trim() || !questionnaire.description.trim();
 
   /**
    * Function to handle input change in the questionnaire title and description
-   * 
+   *
    * @param event
    */
   const handleQuestionnaireInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setQuestionnaire((prevQuestionnaire) => ({
-      ...prevQuestionnaire,
-      [name]: value
-    }));
+    setQuestionnaire((prevQuestionnaire) => {
+      const updatedQuestionnaire = {
+        ...prevQuestionnaire,
+        [name]: value,
+      } as Questionnaire;
+      updateTooltipAndIsDisabled();
+      return updatedQuestionnaire;
+    });
   };
 
   /**
    * Function to handle slider that pass value about what is the minimum score to pass the questionnaire
-   * 
+   *
    * @param event
    * @param value number
    */
@@ -70,23 +76,23 @@ const NewQuestionnaireScreen = () => {
 
   /**
    * Functions to add new question to Questionnaire that is being built
-   * 
+   *
    * @param questionText string
    * @param list of QuestionOptions
    */
-  const handleAddQuestion = ({ questionText, answerOptions }: { questionText: string; answerOptions: AnswerOption[] }) => {
+  const handleAddQuestion = ({
+    questionText,
+    answerOptions
+  }: { questionText: string; answerOptions: AnswerOption[] }) => {
     setQuestionnaire((prevQuestionnaire) => ({
       ...prevQuestionnaire,
-      questions: [
-        ...prevQuestionnaire.questions,
-        { questionText, answerOptions }
-      ]
+      questions: [...prevQuestionnaire.questions, { questionText, answerOptions }]
     }));
   };
 
   /**
    * Function to delete question from the questionnaire that is being built
-   * 
+   *
    * @param index
    */
   const removeQuestionFromPreview = (index: number) => {
@@ -101,7 +107,7 @@ const NewQuestionnaireScreen = () => {
    */
   const countCorrectAnswers = () => {
     return questionnaire.questions.reduce((count, question) => {
-      return count + (question.answerOptions?.filter((option) => option.isCorrect === true).length || 0);
+      return count + (question.answerOptions?.filter((option) => option.isCorrect).length || 0);
     }, 0);
   };
 
@@ -115,7 +121,28 @@ const NewQuestionnaireScreen = () => {
       questions: [],
       passScore: 0
     });
-    setLoading(false);
+    setTooltipMessage("");
+    setIsDisabled(true);
+  };
+
+  /**
+   * Function to check and set the tooltip message and isDisabled state
+   */
+  const updateTooltipAndIsDisabled = () => {
+    const isTitleEmpty = !questionnaire.title.trim();
+    const isDescriptionEmpty = !questionnaire.description.trim();
+    const isDisabled = isTitleEmpty || isDescriptionEmpty;
+
+    const tooltipMessage = isDisabled
+      ? isTitleEmpty && isDescriptionEmpty
+        ? strings.newQuestionnaireScreen.tooltipBothEmpty
+        : isTitleEmpty
+          ? strings.newQuestionnaireScreen.tooltipEmptyTitle
+          : strings.newQuestionnaireScreen.tooltipEmptyDescription
+      : "";
+
+    setTooltipMessage(tooltipMessage);
+    setIsDisabled(isDisabled);
   };
 
   /**
@@ -123,6 +150,12 @@ const NewQuestionnaireScreen = () => {
    */
   const saveQuestionnaire = async () => {
     setLoading(true);
+
+    if (isDisabled) {
+      setLoading(false);
+      return;
+    }
+
     try {
       const createdQuestionnaire = await questionnairesApi.createQuestionnaires({
         questionnaire: {
@@ -133,13 +166,17 @@ const NewQuestionnaireScreen = () => {
         }
       });
       closeAndClear();
-      navigate(-1)
+      navigate(-1);
       return createdQuestionnaire;
     } catch (error) {
       setError(`${strings.error.questionnaireSaveFailed}, ${error}`);
-      setLoading(false);
     }
+    setLoading(false);
   };
+
+  useEffect(() => {
+    updateTooltipAndIsDisabled();
+  }, [questionnaire.title, questionnaire.description]);
 
   return (
     <>
@@ -181,62 +218,65 @@ const NewQuestionnaireScreen = () => {
           />
           <NewQuestionnaireCard handleAddQuestion={handleAddQuestion} />
           <Card
-          sx={{
-            p: 2,
-            mt: 4,
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            height: "100"
-          }}
-          >
-            <CardActions
             sx={{
+              p: 2,
+              mt: 4,
+              width: "100%",
               display: "flex",
-              justifyContent: "flex-end",
-              padding: 0,
-              alignItems: "flex-start",
-              flexDirection: { xs: "column", sm: "row" },
-              width: "100%"
+              flexDirection: "column"
             }}
           >
-            <Box sx={{ display: "flex", flexDirection: "column", width: "70%", mr: 4 }}>
-              <Typography
-                variant="h6"
-                gutterBottom
-                sx={{ display: "flex", alignItems: "center", mb: 1, mt: 1 }}
-              >
-                {strings.newQuestionnaireScreen.countedAnswers} {countCorrectAnswers()}
-              </Typography>
-              <Typography variant="h6" gutterBottom sx={{ mb: 1, mt: 1 }}>
-                {strings.newQuestionnaireScreen.requiredAnswers} {questionnaire.passScore}
-              </Typography>
-              <Slider
-                value={questionnaire.passScore}
-                onChange={handlePassScoreSliderChange}
-                step={1}
-                marks
-                min={0}
-                max={countCorrectAnswers()}
-                valueLabelDisplay="auto"
-                sx={{ mt: 1, mb:1, width: "70%" }}
-              />
-            </Box>
-            <Button
-              sx={{ display: "flex", alignItems: "center", mt: 6, mr: 4 }}
-              id="save-submit"
-              size="large"
-              variant="contained"
-              color="success"
-              onClick={saveQuestionnaire}
-              disabled={loading || checkBeforeSave}
+            <CardActions
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                padding: 0,
+                alignItems: "flex-start",
+                flexDirection: { xs: "column", sm: "row" },
+                width: "100%"
+              }}
             >
-              {loading ? (
-                <CircularProgress size={24} color="inherit" />
-              ) : (
-                strings.newQuestionnaireScreen.saveButton
-              )}
-            </Button>
+              <Box sx={{ display: "flex", flexDirection: "column", width: "70%", mr: 4 }}>
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  sx={{ display: "flex", alignItems: "center", mb: 1, mt: 1 }}
+                >
+                  {strings.newQuestionnaireScreen.countedAnswers} {countCorrectAnswers()}
+                </Typography>
+                <Typography variant="h6" gutterBottom sx={{ mb: 1, mt: 1 }}>
+                  {strings.newQuestionnaireScreen.requiredAnswers} {questionnaire.passScore}
+                </Typography>
+                <Slider
+                  value={questionnaire.passScore}
+                  onChange={handlePassScoreSliderChange}
+                  step={1}
+                  marks
+                  min={0}
+                  max={countCorrectAnswers()}
+                  valueLabelDisplay="auto"
+                  sx={{ mt: 1, mb: 1, width: "70%" }}
+                />
+              </Box>
+              <Tooltip title={tooltipMessage || ""} placement="bottom">
+                <span>
+                  <Button
+                    sx={{ display: "flex", alignItems: "center", mt: 6, mr: 4 }}
+                    id="save-submit"
+                    size="large"
+                    variant="contained"
+                    color="success"
+                    onClick={saveQuestionnaire}
+                    disabled={loading || isDisabled}
+                  >
+                    {loading ? (
+                      <CircularProgress size={24} color="inherit" />
+                    ) : (
+                      strings.newQuestionnaireScreen.saveButton
+                    )}
+                  </Button>
+                </span>
+              </Tooltip>
             </CardActions>
           </Card>
         </CardContent>
@@ -270,9 +310,9 @@ const NewQuestionnaireScreen = () => {
                     {q.answerOptions?.map((option, idx) => (
                       <ListItem component="li" key={idx}>
                         <ListItemText
-                          primary={`${option.label} ${
-                            strings.newQuestionnaireScreen.is
-                          } ${option.isCorrect?.toString() || "false"}`}
+                          primary={`${option.label} ${strings.newQuestionnaireScreen.is} ${
+                            option.isCorrect?.toString() || "false"
+                          }`}
                         />
                       </ListItem>
                     ))}

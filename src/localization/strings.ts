@@ -330,6 +330,9 @@ export interface Localized extends LocalizedStringsMethods {
     insertDescription: string;
     countedAnswers: string;
     requiredAnswers: string;
+    tooltipEmptyTitle: string;
+    tooltipEmptyDescription: string;
+    tooltipBothEmpty: string;
   };
   /**
    * Translations related to New Questionnaire Card

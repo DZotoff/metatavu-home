@@ -248,7 +248,10 @@
     "description": "Kuvaus",
     "insertDescription": "Syötä kuvaus",
     "countedAnswers": "Oikeiden vastausten määrä tässä kyselyssä:",
-    "requiredAnswers": "Montako pitää olla oikein, jotta kysely menee läpi:"
+    "requiredAnswers": "Montako pitää olla oikein, jotta kysely menee läpi:",
+    "tooltipEmptyTitle": "Otsikko on pakollinen",
+    "tooltipEmptyDescription": "Kuvaus on pakollinen",
+    "tooltipBothEmpty": "Otsikko ja kuvaus ovat pakollisia"
   },
   "newQuestionnaireCard": {
     "newQuestion": "Lisää uusi kysymys.",
@@ -257,7 +260,7 @@
     "answerLabel": "Syötä vastaus",
     "insertAnswerLabel": "Syötä vastaus",
     "addAnswer": "+ Lisää uusi vastausvaihtoehto",
-    "saveAnswer": "Tallenna kysymys"
+    "saveAnswer": "Lisää kysymys"
   },
   "questionnaireTable": {
     "title": "Otsikko",
