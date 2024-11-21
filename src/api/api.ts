@@ -11,10 +11,12 @@ import {
 import {
   AllocationsApi,
   Configuration as LambdaConfiguration,
+  MemoApi,
   ProjectsApi,
   SlackAvatarsApi,
   TasksApi,
   TimeEntriesApi,
+  TrelloApi,
   UsersApi,
 } from "../generated/homeLambdasClient";
 
@@ -79,5 +81,7 @@ export const getLambdasApiClient = (accessToken?: string) => {
     timeEntriesApi: new TimeEntriesApi(getConfiguration()),
     slackAvatarsApi: new SlackAvatarsApi(getConfiguration()),
     usersApi: new UsersApi(getConfiguration()),
+    memoApi: new MemoApi(getConfiguration()),
+    trelloApi: new TrelloApi(getConfiguration())
   };
 };

@@ -20,6 +20,8 @@ import RestrictedContentProvider from "./components/providers/restricted-content
 import SprintViewScreen from "./components/screens/sprint-view-screen";
 import QuestionnaireScreen from "./components/screens/questionnaire-screen";
 import NewQuizScreen from "./components/screens/new-questionnaire-screen";
+import MemoScreen from "./components/screens/memo-screen";
+import CardScreen from "./components/screens/card-screen";
 
 /**
  * Application component
@@ -57,6 +59,14 @@ const App = () => {
           path: "/questionnaire",
           element: <QuestionnaireScreen />
         },
+        {
+          path: "/memos",
+          element: <MemoScreen />
+        },
+        {
+          path: "/cards",
+          element: <CardScreen />
+        }
       ]
     },
     {
