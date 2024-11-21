@@ -15,12 +15,12 @@ import {
   Typography
 } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import NewQuestionnaireCard from "../questionnaire/new-questionnaire-card";
 import { KeyboardReturn } from "@mui/icons-material";
 import UserRoleUtils from "src/utils/user-role-utils";
-import type { Questionnaire, AnswerOption } from "src/generated/homeLambdasClient";
+// import type { Questionnaire, AnswerOption } from "src/generated/homeLambdasClient";
 import strings from "src/localization/strings";
 import { useLambdasApi } from "src/hooks/use-api";
 import { useSetAtom } from "jotai";
@@ -35,8 +35,7 @@ const NewQuestionnaireScreen = () => {
   const { questionnairesApi } = useLambdasApi();
   const [loading, setLoading] = useState(false);
   const setError = useSetAtom(errorAtom);
-  const [tooltipMessage, setTooltipMessage] = useState<string>("");
-  const [isDisabled, setIsDisabled] = useState<boolean>(true);
+  
   const [questionnaire, setQuestionnaire] = useState<Questionnaire>({
     title: "",
     description: "",
@@ -51,14 +50,13 @@ const NewQuestionnaireScreen = () => {
    */
   const handleQuestionnaireInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setQuestionnaire((prevQuestionnaire) => {
-      const updatedQuestionnaire = {
+
+    if (name === "title" || name === "description") {
+      setQuestionnaire((prevQuestionnaire) => ({
         ...prevQuestionnaire,
-        [name]: value,
-      } as Questionnaire;
-      updateTooltipAndIsDisabled();
-      return updatedQuestionnaire;
-    });
+          [name]: value,
+      }));
+    }
   };
 
   /**
@@ -121,28 +119,26 @@ const NewQuestionnaireScreen = () => {
       questions: [],
       passScore: 0
     });
-    setTooltipMessage("");
-    setIsDisabled(true);
   };
 
   /**
    * Function to check and set the tooltip message and isDisabled state
    */
-  const updateTooltipAndIsDisabled = () => {
+  const renderUpdatedTooltips = () => {
     const isTitleEmpty = !questionnaire.title.trim();
     const isDescriptionEmpty = !questionnaire.description.trim();
-    const isDisabled = isTitleEmpty || isDescriptionEmpty;
+    
+    if (isTitleEmpty && isDescriptionEmpty) {
+      return strings.newQuestionnaireScreen.tooltipBothEmpty;
+    } 
+    if (isTitleEmpty) {
+      return strings.newQuestionnaireScreen.tooltipEmptyTitle;
+    } 
+    if (isDescriptionEmpty) {
+      return strings.newQuestionnaireScreen.tooltipEmptyDescription;
+    }
 
-    const tooltipMessage = isDisabled
-      ? isTitleEmpty && isDescriptionEmpty
-        ? strings.newQuestionnaireScreen.tooltipBothEmpty
-        : isTitleEmpty
-          ? strings.newQuestionnaireScreen.tooltipEmptyTitle
-          : strings.newQuestionnaireScreen.tooltipEmptyDescription
-      : "";
-
-    setTooltipMessage(tooltipMessage);
-    setIsDisabled(isDisabled);
+    return "";
   };
 
   /**
@@ -150,11 +146,6 @@ const NewQuestionnaireScreen = () => {
    */
   const saveQuestionnaire = async () => {
     setLoading(true);
-
-    if (isDisabled) {
-      setLoading(false);
-      return;
-    }
 
     try {
       const createdQuestionnaire = await questionnairesApi.createQuestionnaires({
@@ -173,10 +164,6 @@ const NewQuestionnaireScreen = () => {
     }
     setLoading(false);
   };
-
-  useEffect(() => {
-    updateTooltipAndIsDisabled();
-  }, [questionnaire.title, questionnaire.description]);
 
   return (
     <>
@@ -258,7 +245,7 @@ const NewQuestionnaireScreen = () => {
                   sx={{ mt: 1, mb: 1, width: "70%" }}
                 />
               </Box>
-              <Tooltip title={tooltipMessage || ""} placement="bottom">
+              <Tooltip title={renderUpdatedTooltips()} placement="bottom">
                 <span>
                   <Button
                     sx={{ display: "flex", alignItems: "center", mt: 6, mr: 4 }}
@@ -267,7 +254,7 @@ const NewQuestionnaireScreen = () => {
                     variant="contained"
                     color="success"
                     onClick={saveQuestionnaire}
-                    disabled={loading || isDisabled}
+                    disabled={loading || !questionnaire.title || !questionnaire.description}
                   >
                     {loading ? (
                       <CircularProgress size={24} color="inherit" />
