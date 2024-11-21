@@ -24,8 +24,6 @@ import ReactMarkdown from "react-markdown";
 import UserRoleUtils from "src/utils/user-role-utils";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline"
 import strings from "src/localization/strings";
-import { Height } from "@mui/icons-material";
-import { isOverflown } from "@mui/x-data-grid/utils/domUtils";
 
 /**
  * Card screen component
@@ -49,8 +47,6 @@ const CardScreen = () => {
   useEffect(() => {
     fetchCards();
   }, []);
-
-  
 
   const fetchCards = async () => {
     setLoading(true);

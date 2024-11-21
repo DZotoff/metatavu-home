@@ -51,8 +51,6 @@ const MemoScreen = () => {
     } catch {
       
     }
-    
-  
   };
 
   return (
