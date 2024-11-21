@@ -347,6 +347,7 @@ export interface Localized extends LocalizedStringsMethods {
     selectPdf: string;
     download: string,
     translatePdf: string,
+    originalPdf: string,
     viewSummary: string,
     summaryTitle:string,
     close: string,

@@ -16,13 +16,14 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useLambdasApi } from "src/hooks/use-api";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { languageAtom } from "src/atoms/language";
 import { DateTime } from "luxon";
 import dayjs from "dayjs";
 import { AutoAwesomeSharp, GTranslateSharp, PictureAsPdfSharp }  from "@mui/icons-material";
 import strings from "src/localization/strings";
 import { PdfFile } from "src/generated/homeLambdasClient";
+import { errorAtom } from "src/atoms/error";
 
 /**
  * Memo screen component
@@ -30,16 +31,18 @@ import { PdfFile } from "src/generated/homeLambdasClient";
 const MemoScreen = () => {
   const [selectedYear, setSelectedYear] = useState<DateTime | null>(DateTime.now());
   const [fileList, setFileList] = useState<PdfFile[]>([]);
-  const [error, setError] = useState<string | null>(null);
   const [selectedFileId, setSelectedFileId] = useState<string>();
   const { memoApi } = useLambdasApi();
+  const setError = useSetAtom(errorAtom);
 
   useEffect(() => {
     fetchMemos();
   }, [selectedYear]);
 
+  /**
+   * Fetches memo files
+   */
   const fetchMemos = async () => {
-    
     if (!selectedYear) {
       throw new Error(strings.memoRequestError.fetchYearError);
     }
@@ -48,8 +51,8 @@ const MemoScreen = () => {
       const validFiles = await memoApi.getMemos({ date: formattedDate });
       setFileList(validFiles);
       setSelectedFileId(validFiles[0]?.id);
-    } catch {
-      
+    } catch(error) {
+      setError(`${strings.memoRequestError.fetchFileError}, ${error}`);
     }
   };
 
@@ -94,7 +97,6 @@ const MemoScreen = () => {
             </ListItem>
           ))}
         </List>
-        {error && <Typography color="error">{error}</Typography>}
       </Card>
       <Box 
         display="flex" 
@@ -120,12 +122,20 @@ const PdfViewer = ({ fileId }: { fileId: string }) => {
   const [pdfBlobUrl, setPdfBlobUrl] = useState<string>();
   const [loading, setLoading] = useState(true);
   const [isTranslating, setIsTranslating] = useState(false);
-  const [error, setError] = useState<string>();
+  const [translated, setTranslated] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [summaryText, setSummaryText] = useState<string>();
   const [language] = useAtom(languageAtom);
   const { memoApi } = useLambdasApi();
+  const setError = useSetAtom(errorAtom);
 
+  useEffect(() => {
+    if (fileId) fetchPdf();
+  }, [fileId]);
+
+  /**
+   * Fetches memo pdf file
+   */
   const fetchPdf = async () => {
     setLoading(true);
     try {
@@ -133,28 +143,38 @@ const PdfViewer = ({ fileId }: { fileId: string }) => {
       const pdfBlob = await memoApi.getContentMemo({ fileId });
       const pdfUrl = URL.createObjectURL(pdfBlob);
       setPdfBlobUrl(pdfUrl);
+      setTranslated(false);
     } catch (err) {
       setError(strings.memoRequestError.fetchPdfError);
     }
     setLoading(false);
   };
 
-  useEffect(() => {
-    if (fileId) fetchPdf();
-  }, [fileId]);
-
   const handleTranslatedPdf = async () => {
+    if (!translated) 
+      await translatePdf();
+    else await fetchPdf();
+  };
+
+  /**
+   * Fetches translated memo pdf file
+   */
+  const translatePdf = async () => {
     setIsTranslating(true);
     try {
       const translatedPdf = await memoApi.getTranslatedMemoPdf({ fileId });
       const pdfUrl = URL.createObjectURL(translatedPdf);
       setPdfBlobUrl(pdfUrl);
+      setTranslated(true);
     } catch (error) {
       setError(strings.memoRequestError.downloadTranslatedError);
     } 
     setIsTranslating(false);
-  };
+  } 
 
+  /**
+   * Fetches summary for a memo
+   */
   const handleSummary = async () => {
     try {
       setIsDialogOpen(true);
@@ -194,7 +214,7 @@ const PdfViewer = ({ fileId }: { fileId: string }) => {
         <Box display="flex" alignItems="center" gap={0.5}>
           <GTranslateSharp />
           <Button onClick={handleTranslatedPdf} disabled={!fileId || isTranslating}>
-            {strings.memoScreen.translatePdf}
+            {translated ? strings.memoScreen.originalPdf : strings.memoScreen.translatePdf}
           </Button>
         </Box>
         

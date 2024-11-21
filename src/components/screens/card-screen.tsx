@@ -19,17 +19,19 @@ import {
   Typography
 } from "@mui/material";
 import { useLambdasApi } from "src/hooks/use-api";
-import { TrelloMember } from "src/generated/homeLambdasClient";
+import { TrelloCard, TrelloMember } from "src/generated/homeLambdasClient";
 import ReactMarkdown from "react-markdown";
 import UserRoleUtils from "src/utils/user-role-utils";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline"
 import strings from "src/localization/strings";
+import { useSetAtom } from "jotai";
+import { errorAtom } from "src/atoms/error";
 
 /**
  * Card screen component
  */
 const CardScreen = () => {
-  const [cards, setCards] = useState<any[]>([]);
+  const [cards, setCards] = useState<TrelloCard[]>([]);
   const [filteredCards, setFilteredCards] = useState<any[]>([]);
   const [filterQuery, setFilterQuery] = useState("");
   const [members, setMembers] = useState<TrelloMember[]>([]);
@@ -43,36 +45,28 @@ const CardScreen = () => {
   const [loading, setLoading] = useState(true);
   const { trelloApi } = useLambdasApi();
   const adminMode = UserRoleUtils.adminMode();
+  const setError = useSetAtom(errorAtom);
 
   useEffect(() => {
     fetchCards();
   }, []);
 
+  /**
+   * Fetches Trello cards and board members
+   */
   const fetchCards = async () => {
     setLoading(true);
     try {
       const cards = await trelloApi.listCards();
       const members = await trelloApi.getBoardMembersEmails();
-      const cardsAdded = cards.map((selectedCard) => {
-        const memberComments = selectedCard.comments?.map((comment: any) => {
-          const member = members.find((member) => member.memberId === comment.createdBy);
-          return {
-            ...comment,
-            email: member?.email || `${strings.cardRequestError.noEmail}`,
-            fullName: member?.fullName || `${strings.cardRequestError.unknownMember}`,
-          };
-        });
-        return { ...selectedCard, comments: memberComments };
-      });
       setMembers(members);
-      setCards(cardsAdded);
-      setFilteredCards(cardsAdded);
+      setCards(cards);
+      setFilteredCards(cards);
     } catch (error) {
-      // add set error
+      setError(`${strings.cardRequestError.errorFetchingCards}, ${error}`);
     }
     setLoading(false);
   };
-
 
   /**
    * Filters cards based on the user input in the filter field
@@ -82,7 +76,7 @@ const CardScreen = () => {
   const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value.toLowerCase();
     setFilterQuery(query);
-    setFilteredCards(cards.filter((card) => card.title.toLowerCase().includes(query)));
+    setFilteredCards(cards.filter((card) => card.title?.toLowerCase().includes(query)));
   };
 
   /**
@@ -92,12 +86,15 @@ const CardScreen = () => {
    */
   const deleteCard = async (id: string) => {
     try {
-      await trelloApi.deleteCard({ id });
-      const updatedCards = cards.filter((card) => card.id !== id);
-      setCards(updatedCards);
-      setFilteredCards(updatedCards);
+      const deleteCardResponse = await trelloApi.deleteCard({ id });
+      if (deleteCardResponse.message === "Card deleted successfully") {
+        const updatedCards = cards.filter((card) => card?.cardId !== id);
+        const updatedFilteredCards = filteredCards.filter((card) => card?.cardId !== id);
+        setCards(updatedCards);
+        setFilteredCards(updatedFilteredCards);
+      }
     } catch (error) {
-      //
+      setError(`${strings.cardRequestError.errorDeletingCard}, ${error}`);
     }
   };
   
@@ -106,13 +103,23 @@ const CardScreen = () => {
    */
   const createCard = async () => {
     try {
-      const response = await trelloApi.createCard({ createCardRequest: {title: title, description: description} });
-      // setCards([...cards, ...response]);
-      // setFilteredCards([...filteredCards, ...response]);
+      const cardCreated = await trelloApi.createCard({ createCardRequest: {title: title, description: description} });
+      if (cardCreated.cardId) {
+        const newCard = {
+          cardId: cardCreated.cardId,
+          title: title,
+          description: description,
+          assignedPersons: [],
+          comments: []
+        }
+        setCards([...cards, newCard]);
+        if (cardCreated.title?.toLowerCase().includes(filterQuery)) 
+          setFilteredCards([...filteredCards, newCard]);
+      }
       setTitle("");
       setDescription("");
     } catch (error) {
-      //
+      setError(`${strings.cardRequestError.errorCreatingCard}, ${error}`);
     }
   };
 
@@ -124,9 +131,7 @@ const CardScreen = () => {
       try {
         const newComment = {
           text: comment,
-          createdBy: selectedCard.cardId.createdBy,
-          fullName: selectedCard.cardId.fullName,
-          email: selectedCard.cardId.email,
+          createdBy: members[0].memberId // need to be replaced with the actual user
         };
 
         await trelloApi.createComment({
@@ -135,19 +140,23 @@ const CardScreen = () => {
 
         const updatedSelectedCard = {
           ...selectedCard,
-          comments: [...(selectedCard.comments || []), newComment],
+          comments: [...selectedCard.comments, newComment],
         };
 
         const updatedCards = cards.map((card) =>
           card.cardId === selectedCard.cardId ? updatedSelectedCard : card
         );
 
+        const updatedFilteredCards = filteredCards.map((card) =>
+          card.cardId === selectedCard.cardId ? updatedSelectedCard : card
+        );
+
         setSelectedCard(updatedSelectedCard);
         setCards(updatedCards);
-        setFilteredCards(updatedCards);
+        setFilteredCards(updatedFilteredCards);
         setComment("");
       } catch (error) {
-        console.error(`${strings.cardRequestError.errorAddingComment}`, error);
+        setError(`${strings.cardRequestError.errorAddingComment}, ${error}`);
       }
     }
   };
@@ -240,7 +249,7 @@ const CardScreen = () => {
               {hiddenMembers
                 .map(
                   (id) =>
-                    members.find((m) => m.memberId === id)?.fullName || `${strings.cardRequestError.unknownMember}`
+                    members.find((member) => member.memberId === id)?.fullName || `${strings.cardRequestError.unknownMember}`
                 )
                 .map((name, index) => (
                   <div key={index}>
@@ -274,14 +283,14 @@ const CardScreen = () => {
         <TextField
           label={strings.cardScreen.title}
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(event) => setTitle(event.target.value)}
           fullWidth
           sx={{ mt: 1 }}
         />
         <TextField
           label={strings.cardScreen.description}
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={(event) => setDescription(event.target.value)}
           multiline
           rows={4}
           fullWidth
@@ -324,7 +333,7 @@ const CardScreen = () => {
         ) : (
         <>
           {filteredCards.map((card: any) => (
-            <Card key={card.cardId} variant='outlined' sx={{ 
+            <Card key={card.cardId} sx={{ 
               display: "flex", 
               flexDirection: "column", 
               height: "400px",
@@ -367,10 +376,10 @@ const CardScreen = () => {
                   gap: "8px",
                 }}
                 >
-                  <Tooltip title={
+                  <Tooltip title={card.comments.length > 0 ?
                     <Box>
                       {card.comments?.reduce((sum: any, comment: any) => {
-                        const author = comment.fullName;
+                        const author = members.find(member => member.memberId === comment.createdBy)?.fullName || '';
                         const existing = sum.find((item: any) => item.includes(author));
                         if (existing) {
                           const count = parseInt(existing.split(" ")[0]) + 1;
@@ -397,6 +406,7 @@ const CardScreen = () => {
                           <div key={index}>{text}</div>
                         )) || <div>{strings.cardRequestError.noComments}</div>}
                     </Box>
+                    : ""
                   }>
                     <IconButton>
                       <Badge
@@ -452,15 +462,15 @@ const CardScreen = () => {
                     variant="body2" 
                     sx={{ pl: 2 }}
                   >
-                    - {comment.text || `${strings.cardRequestError.noText}`} ({comment.fullName || `${strings.cardRequestError.unknownAuthor}`} -{" "}
-                    {comment.email || `${strings.cardRequestError.noEmail}`})
+                    - {comment.text || `${strings.cardRequestError.noText}`} ({members.find(member => member.memberId === comment.createdBy)?.fullName || `${strings.cardRequestError.unknownAuthor}`} -{" "}
+                    {members.find(member => member.memberId === comment.createdBy)?.email || `${strings.cardRequestError.noEmail}`})
                   </Typography>
                 ))}
               </Box>
               <TextField
                 label={strings.cardScreen.addComment}
                 value={comment}
-                onChange={(e) => setComment(e.target.value)}
+                onChange={(event) => setComment(event.target.value)}
                 fullWidth
                 sx={{ mt: 1 }}
               />
