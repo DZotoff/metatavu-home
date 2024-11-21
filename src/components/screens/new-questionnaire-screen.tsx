@@ -35,7 +35,7 @@ const NewQuestionnaireScreen = () => {
   const { questionnairesApi } = useLambdasApi();
   const [loading, setLoading] = useState(false);
   const setError = useSetAtom(errorAtom);
-  
+
   const [questionnaire, setQuestionnaire] = useState<Questionnaire>({
     title: "",
     description: "",
@@ -54,7 +54,7 @@ const NewQuestionnaireScreen = () => {
     if (name === "title" || name === "description") {
       setQuestionnaire((prevQuestionnaire) => ({
         ...prevQuestionnaire,
-          [name]: value,
+        [name]: value
       }));
     }
   };
@@ -127,17 +127,16 @@ const NewQuestionnaireScreen = () => {
   const renderUpdatedTooltips = () => {
     const isTitleEmpty = !questionnaire.title.trim();
     const isDescriptionEmpty = !questionnaire.description.trim();
-    
+
     if (isTitleEmpty && isDescriptionEmpty) {
       return strings.newQuestionnaireScreen.tooltipBothEmpty;
-    } 
+    }
     if (isTitleEmpty) {
       return strings.newQuestionnaireScreen.tooltipEmptyTitle;
-    } 
+    }
     if (isDescriptionEmpty) {
       return strings.newQuestionnaireScreen.tooltipEmptyDescription;
     }
-
     return "";
   };
 
