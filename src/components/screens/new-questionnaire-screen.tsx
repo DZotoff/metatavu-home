@@ -35,13 +35,13 @@ const NewQuestionnaireScreen = () => {
   const { questionnairesApi } = useLambdasApi();
   const [loading, setLoading] = useState(false);
   const setError = useSetAtom(errorAtom);
-
   const [questionnaire, setQuestionnaire] = useState<Questionnaire>({
     title: "",
     description: "",
     questions: [],
     passScore: 0
   });
+  const isDisabled = !questionnaire.title || !questionnaire.description;
 
   /**
    * Function to handle input change in the questionnaire title and description
@@ -51,12 +51,10 @@ const NewQuestionnaireScreen = () => {
   const handleQuestionnaireInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
 
-    if (name === "title" || name === "description") {
-      setQuestionnaire((prevQuestionnaire) => ({
-        ...prevQuestionnaire,
-        [name]: value
-      }));
-    }
+    setQuestionnaire((prevQuestionnaire) => ({
+      ...prevQuestionnaire,
+      [name]: value
+    }));
   };
 
   /**
@@ -253,7 +251,7 @@ const NewQuestionnaireScreen = () => {
                     variant="contained"
                     color="success"
                     onClick={saveQuestionnaire}
-                    disabled={loading || !questionnaire.title || !questionnaire.description}
+                    disabled={loading || isDisabled}
                   >
                     {loading ? (
                       <CircularProgress size={24} color="inherit" />
