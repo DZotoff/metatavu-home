@@ -22,48 +22,43 @@ import { DateTime } from "luxon";
 import dayjs from "dayjs";
 import { AutoAwesomeSharp, GTranslateSharp, PictureAsPdfSharp }  from "@mui/icons-material";
 import strings from "src/localization/strings";
+import { PdfFile } from "src/generated/homeLambdasClient";
 
 /**
  * Memo screen component
  */
 const MemoScreen = () => {
   const [selectedYear, setSelectedYear] = useState<DateTime | null>(DateTime.now());
-  const [fileList, setFileList] = useState<{ id: string; name: string }[]>([]);
+  const [fileList, setFileList] = useState<PdfFile[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
+  const [selectedFileId, setSelectedFileId] = useState<string>();
   const { memoApi } = useLambdasApi();
-
-  const fetchMemos = async () => {
-    try {
-      if (!selectedYear) {
-        throw new Error(strings.memoRequestError.fetchYearError);
-      }
-  
-      const formattedDate = selectedYear.toJSDate();
-      const response = await memoApi.getMemos({ date: formattedDate });
-  
-      const validFiles = (response || []).map(file => ({
-        id: file.id || "",
-        name: file.name || `${strings.memoRequestError.fetchFileNameError}`,
-      }));
-  
-      setFileList(validFiles);
-      setSelectedFileId(validFiles[0]?.id || null);
-    } catch (err) {
-      setError(strings.memoRequestError.fetchFileError);
-      console.error("File fetch error:", err);
-    }
-  };
 
   useEffect(() => {
     fetchMemos();
   }, [selectedYear]);
 
+  const fetchMemos = async () => {
+    
+    if (!selectedYear) {
+      throw new Error(strings.memoRequestError.fetchYearError);
+    }
+    const formattedDate = selectedYear.toJSDate();
+    try {
+      const validFiles = await memoApi.getMemos({ date: formattedDate });
+      setFileList(validFiles);
+      setSelectedFileId(validFiles[0]?.id);
+    } catch {
+      
+    }
+    
+  
+  };
+
   return (
     <Box 
       display="flex" 
       flexDirection="row" 
-      p={2} 
       width="100%" 
       height="50vh"
     >
@@ -127,9 +122,9 @@ const PdfViewer = ({ fileId }: { fileId: string }) => {
   const [pdfBlobUrl, setPdfBlobUrl] = useState<string>();
   const [loading, setLoading] = useState(true);
   const [isTranslating, setIsTranslating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [summaryText, setSummaryText] = useState<string | null>(null);
+  const [summaryText, setSummaryText] = useState<string>();
   const [language] = useAtom(languageAtom);
   const { memoApi } = useLambdasApi();
 
@@ -142,7 +137,6 @@ const PdfViewer = ({ fileId }: { fileId: string }) => {
       setPdfBlobUrl(pdfUrl);
     } catch (err) {
       setError(strings.memoRequestError.fetchPdfError);
-      console.error("PDF Load Error:", err);
     }
     setLoading(false);
   };
@@ -153,31 +147,24 @@ const PdfViewer = ({ fileId }: { fileId: string }) => {
 
   const handleTranslatedPdf = async () => {
     setIsTranslating(true);
-    setError(null);
-
     try {
       const translatedPdf = await memoApi.getTranslatedMemoPdf({ fileId });
       const pdfUrl = URL.createObjectURL(translatedPdf);
       setPdfBlobUrl(pdfUrl);
-    } catch (err) {
+    } catch (error) {
       setError(strings.memoRequestError.downloadTranslatedError);
-      console.error("Translated PDF download error:", err);
-    } finally {
-      setIsTranslating(false);
-    }
+    } 
+    setIsTranslating(false);
   };
 
   const handleSummary = async () => {
     try {
-      setError(null);
       setIsDialogOpen(true);
-      setSummaryText(null);
       const summary = await memoApi.getSummaryMemo({ fileId });
       const text = language === "fi" ? summary.fi ?? "" : summary.en ?? "";
       setSummaryText(text);
-    } catch (err) {
+    } catch (error) {
       setError(strings.memoRequestError.fetchSummaryError);
-      console.error("Summary fetch error:", err);
     }
   };
 
@@ -240,9 +227,10 @@ const PdfViewer = ({ fileId }: { fileId: string }) => {
           <PdfObject pdfBlobUrl={pdfBlobUrl} /> 
         : 
           <Typography variant="body1" color="error">
-            Failed to load PDF.
+            {strings.memoScreen.failedToLoadPdf}
           </Typography>
-      )}
+        )
+      }
 
       {isDialogOpen && (
         <Box sx={{
@@ -301,7 +289,7 @@ const PdfObject = ({pdfBlobUrl}: {pdfBlobUrl: string}) => {
           href={pdfBlobUrl} 
           download
         >
-        {strings.memoScreen.downloadPdf}
+          {strings.memoScreen.downloadPdf}
         </Button>
       </Typography>
     </object>

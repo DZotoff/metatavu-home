@@ -24,6 +24,8 @@ import ReactMarkdown from "react-markdown";
 import UserRoleUtils from "src/utils/user-role-utils";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline"
 import strings from "src/localization/strings";
+import { Height } from "@mui/icons-material";
+import { isOverflown } from "@mui/x-data-grid/utils/domUtils";
 
 /**
  * Card screen component
@@ -37,41 +39,44 @@ const CardScreen = () => {
   const [description, setDescription] = useState("");
   const [selectedCard, setSelectedCard] = useState<any>();
   const [comment, setComment] = useState("");
-  const { trelloApi } = useLambdasApi();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const adminMode = UserRoleUtils.adminMode();
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const { trelloApi } = useLambdasApi();
+  const adminMode = UserRoleUtils.adminMode();
 
   useEffect(() => {
-    const fetchCards = async () => {
-      try {
-        setLoading(true);
-        const cards = await trelloApi.listCards();
-        const members: TrelloMember[] = await trelloApi.getBoardMembersEmails();
-        const cardsAdded = cards.map((selectedCard) => {
-          const enrichedComments = selectedCard.comments?.map((comment: any) => {
-            const member = members.find((m) => m.memberId === comment.createdBy);
-            return {
-              ...comment,
-              email: member?.email || `${strings.cardRequestError.noEmail}`,
-              fullName: member?.fullName || `${strings.cardRequestError.unknownMember}`,
-            };
-          });
-          return { ...selectedCard, comments: enrichedComments };
-        });
-        setMembers(members);
-        setCards(cardsAdded);
-        setFilteredCards(cardsAdded);
-        setLoading(false);
-      } catch (error) {
-        console.error(strings.cardRequestError.errorFetchingCards, error);
-        setLoading(false);
-      }
-    };
     fetchCards();
   }, []);
+
+  
+
+  const fetchCards = async () => {
+    setLoading(true);
+    try {
+      const cards = await trelloApi.listCards();
+      const members = await trelloApi.getBoardMembersEmails();
+      const cardsAdded = cards.map((selectedCard) => {
+        const memberComments = selectedCard.comments?.map((comment: any) => {
+          const member = members.find((member) => member.memberId === comment.createdBy);
+          return {
+            ...comment,
+            email: member?.email || `${strings.cardRequestError.noEmail}`,
+            fullName: member?.fullName || `${strings.cardRequestError.unknownMember}`,
+          };
+        });
+        return { ...selectedCard, comments: memberComments };
+      });
+      setMembers(members);
+      setCards(cardsAdded);
+      setFilteredCards(cardsAdded);
+    } catch (error) {
+      // add set error
+    }
+    setLoading(false);
+  };
+
 
   /**
    * Filters cards based on the user input in the filter field
@@ -96,7 +101,7 @@ const CardScreen = () => {
       setCards(updatedCards);
       setFilteredCards(updatedCards);
     } catch (error) {
-      console.error(`${strings.cardRequestError.errorDeletingCard}`, error);
+      //
     }
   };
   
@@ -111,7 +116,7 @@ const CardScreen = () => {
       setTitle("");
       setDescription("");
     } catch (error) {
-      console.error(`${strings.cardRequestError.errorCreatingCard}`, error);
+      //
     }
   };
 
@@ -267,8 +272,8 @@ const CardScreen = () => {
   };
   
   return (
-    <Box p={2}>
-      <Card variant="outlined" sx={{ mb: 2, p: 2 }}>
+    <Box>
+      <Card sx={{ mb: 2, p: 2 }}>
         <Typography variant="h6">{strings.cardScreen.createNewCard}</Typography>
         <TextField
           label={strings.cardScreen.title}
@@ -290,13 +295,14 @@ const CardScreen = () => {
           {strings.cardScreen.createCard}
         </Button>
       </Card>
-      <TextField
-        label={strings.cardScreen.filterCards}
-        value={filterQuery}
-        onChange={handleFilterChange}
-        fullWidth
-        sx={{ mb: 2 }}
-      />
+      <Card sx={{ mb: 2, p: 2 }}>
+        <TextField
+          label={strings.cardScreen.filterCards}
+          value={filterQuery}
+          onChange={handleFilterChange}
+          fullWidth
+        />
+      </Card>
       <Box
         sx={{
           display: "grid",
@@ -322,23 +328,25 @@ const CardScreen = () => {
         ) : (
         <>
           {filteredCards.map((card: any) => (
-            <Card key={card.cardId} variant="outlined" sx={{ 
+            <Card key={card.cardId} variant='outlined' sx={{ 
               display: "flex", 
               flexDirection: "column", 
               height: "400px",
               position: "relative" 
             }}>
-              <CardContent sx={{ flexGrow: 1 }}>
+              <CardContent sx={{ flexGrow: 1, height: '40%' }}>
                 <Typography variant="h6">{card.title}</Typography>
-                <ReactMarkdown
-                  components={{
-                    img: ({ node, ...props }) => (
-                      <img {...props} style={{ width: "100%", height: "auto" }} alt={props.alt || "Image"} />
-                    ),
-                  }}
-                >
-                  {card.description ? card.description : `${strings.cardRequestError.noDescription}`}
-                </ReactMarkdown>
+                <Box style={{height: '80%', overflow: 'hidden'}}>
+                  <ReactMarkdown
+                    components={{
+                      img: ({ node, ...props }) => (
+                        <img {...props} style={{ width: "100%", height: "auto" }} alt={props.alt || "Image"} />
+                      ),
+                    }}
+                  >
+                    {card.description ? card.description : `${strings.cardRequestError.noDescription}`}
+                  </ReactMarkdown>
+                </Box>
               </CardContent>
               <CardActions sx={{
                 display: "flex",
@@ -356,16 +364,15 @@ const CardScreen = () => {
                     </Button>
                   )}
                 </Box>
-                <Box     
+                <Box
                   sx={{
                   display: "flex",
                   alignItems: "center",
                   gap: "8px",
                 }}
                 >
-                  <Tooltip
-                    title={
-                      <Box>
+                  <Tooltip title={
+                    <Box>
                       {card.comments?.reduce((sum: any, comment: any) => {
                         const author = comment.fullName;
                         const existing = sum.find((item: any) => item.includes(author));
@@ -375,11 +382,11 @@ const CardScreen = () => {
                           sum.push(
                             count > 1
                               ? strings.cardScreen.messagesFrom
-                                  .replace("{count}", count.toString())
-                                  .replace("{author}", author)
+                                .replace("{count}", count.toString())
+                                .replace("{author}", author)
                               : strings.cardScreen.messageFrom
-                                  .replace("{count}", "1")
-                                  .replace("{author}", author)
+                                .replace("{count}", "1")
+                                .replace("{author}", author)
                           );
                         } else {
                           sum.push(
@@ -394,17 +401,16 @@ const CardScreen = () => {
                           <div key={index}>{text}</div>
                         )) || <div>{strings.cardRequestError.noComments}</div>}
                     </Box>
-                    }
-                  >
-                  <IconButton>
-                  <Badge
-                    badgeContent={card.comments?.length || 0}
-                    color="primary"
-                    overlap="circular"
-                  >
-                    <ChatBubbleOutlineIcon />
-                  </Badge>
-                  </IconButton> 
+                  }>
+                    <IconButton>
+                      <Badge
+                        badgeContent={card.comments?.length || 0}
+                        color="primary"
+                        overlap="circular"
+                      >
+                        <ChatBubbleOutlineIcon />
+                      </Badge>
+                    </IconButton> 
                   </Tooltip>
                 </Box>
                 <AvatarWrapper memberIds={card.assignedPersons} />
@@ -448,7 +454,8 @@ const CardScreen = () => {
                   <Typography 
                     key={index} 
                     variant="body2" 
-                    sx={{ pl: 2 }}>
+                    sx={{ pl: 2 }}
+                  >
                     - {comment.text || `${strings.cardRequestError.noText}`} ({comment.fullName || `${strings.cardRequestError.unknownAuthor}`} -{" "}
                     {comment.email || `${strings.cardRequestError.noEmail}`})
                   </Typography>
@@ -465,42 +472,37 @@ const CardScreen = () => {
                 {strings.cardScreen.addComment}
               </Button>
             </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setIsDialogOpen(false)} color="primary">
-               {strings.cardScreen.close}
-              </Button>
-            </DialogActions>
           </Dialog>
         )}
-          <Dialog open={isImageOpen} onClose={closeImage} maxWidth="lg" fullWidth>
-            <DialogContent>
-              <Box sx={{ 
-                display: "flex", 
-                justifyContent: "flex-end", 
-                alignItems: "flex-end" 
-              }}>
-                {selectedImage ? (
-                  <img
-                    src={selectedImage}
-                    alt="Full Size"
-                    style={{ 
-                      width: "100%", 
-                      height: "auto", 
-                      objectFit: "contain", 
-                      marginTop: "16px" 
-                    }}
-                  />
-                ) : (
-                  <Typography>{strings.cardRequestError.noImage}</Typography>
-                )}
-              </Box>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={closeImage} color="primary">
-                {strings.cardScreen.close}
-              </Button>
-            </DialogActions>
-          </Dialog>
+        <Dialog open={isImageOpen} onClose={closeImage} maxWidth="lg" fullWidth>
+          <DialogContent>
+            <Box sx={{ 
+              display: "flex", 
+              justifyContent: "flex-end", 
+              alignItems: "flex-end" 
+            }}>
+              {selectedImage ? (
+                <img
+                  src={selectedImage}
+                  alt="Full Size"
+                  style={{ 
+                    width: "100%", 
+                    height: "auto", 
+                    objectFit: "contain", 
+                    marginTop: "16px" 
+                  }}
+                />
+              ) : (
+                <Typography>{strings.cardRequestError.noImage}</Typography>
+              )}
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={closeImage} color="primary">
+              {strings.cardScreen.close}
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </Box>
   );
