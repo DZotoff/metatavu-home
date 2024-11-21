@@ -1,4 +1,4 @@
-// import type { User } from "src/generated/homeLambdasClient/models/User";
+import type { User } from "src/generated/homeLambdasClient/models/User";
 import config from "src/app/config";
 
 /**
@@ -8,8 +8,8 @@ import config from "src/app/config";
  * @returns 
  */
 export const getSeveraUserId = (user: User | undefined): string => {
-	if (user?.severaUserId) {
-    return user.severaUserId;
+	if (user?.attributes?.severaUserId) {
+    return user.attributes.severaUserId;
   }
   const testUserSeveraId = config.user.testUserSeveraId || "";
   return testUserSeveraId;
