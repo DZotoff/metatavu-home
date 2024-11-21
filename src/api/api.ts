@@ -18,8 +18,8 @@ import {
   TimeEntriesApi,
   TrelloApi,
   UsersApi,
+  QuestionnairesApi
 } from "../generated/homeLambdasClient";
-
 
 /**
  * Generic type that accepts parameters within the @ConfigurationParameters interface
@@ -82,6 +82,7 @@ export const getLambdasApiClient = (accessToken?: string) => {
     slackAvatarsApi: new SlackAvatarsApi(getConfiguration()),
     usersApi: new UsersApi(getConfiguration()),
     memoApi: new MemoApi(getConfiguration()),
-    trelloApi: new TrelloApi(getConfiguration())
+    trelloApi: new TrelloApi(getConfiguration()),
+    questionnairesApi: new QuestionnairesApi(getConfiguration())
   };
 };
