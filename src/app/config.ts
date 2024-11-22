@@ -12,6 +12,9 @@ interface Config {
   lambdas: {
     baseUrl: string;
   };
+  severa: {
+    baseUrl: string;
+  };
   person: {
     forecastUserIdOverride: number;
   };
@@ -27,7 +30,8 @@ const env = cleanEnv(import.meta.env, {
   VITE_API_BASE_URL: url(),
   VITE_FORECAST_USER_ID_OVERRIDE: num({ default: undefined }),
   VITE_HOME_LAMBDAS_BASE_URL: url(),
-  VITE_TEST_USER_SEVERA_ID: str()
+  VITE_TEST_USER_SEVERA_ID: str(),
+  VITE_SEVERA_API_BASE_URL: url()
 });
 
 const config: Config = {
@@ -41,6 +45,9 @@ const config: Config = {
   },
   lambdas: {
     baseUrl: env.VITE_HOME_LAMBDAS_BASE_URL
+  },
+  severa: {
+    baseUrl: env.VITE_SEVERA_API_BASE_URL
   },
   person: {
     forecastUserIdOverride: env.VITE_FORECAST_USER_ID_OVERRIDE
