@@ -70,7 +70,7 @@ const CardDialog = ({
           {selectedCard?.description || strings.cardRequestError.noDescription}
         </ReactMarkdown>
         <Box>
-          <Typography variant="subtitle1">{strings.cardScreen.comments}:</Typography>
+          <Typography variant="subtitle1">{strings.cardScreen.comments}</Typography>
           {selectedCard?.comments?.map((comment: any, index: number) => (
             <Typography key={index} variant="body2" sx={{ pl: 2 }}>
               - {comment.text || `${strings.cardRequestError.noText}`} (
