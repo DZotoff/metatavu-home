@@ -1,21 +1,15 @@
-import {
-  Paper,
-  Button,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogTitle
-} from "@mui/material";
+import { Paper, Button, CircularProgress, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useState, useEffect } from "react";
 import type { Questionnaire } from "src/generated/homeLambdasClient";
 import strings from "src/localization/strings";
 import UserRoleUtils from "src/utils/user-role-utils";
-import { DataGrid, type GridRenderCellParams } from "@mui/x-data-grid";
+import { DataGrid, type GridRowParams, type GridRenderCellParams } from "@mui/x-data-grid";
 import { useLambdasApi } from "src/hooks/use-api";
 import { useSetAtom } from "jotai";
 import { errorAtom } from "src/atoms/error";
+import QuestionnaireInteractionScreen from "src/components/questionnaire/questionnaire-interaction-screen";
 
 /**
  * Questionnaire Table Component
@@ -30,6 +24,7 @@ const QuestionnaireTable = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleteTitle, setDeleteTitle] = useState<string | null>(null);
+  const [selectedQuestionnaire, setSelectedQuestionnaire] = useState<Questionnaire | null>(null);
   const setError = useSetAtom(errorAtom);
 
   useEffect(() => {
@@ -65,6 +60,7 @@ const QuestionnaireTable = () => {
     setDialogOpen(false);
     setDeleteId(null);
     setDeleteTitle(null);
+    setSelectedQuestionnaire(null);
   };
 
   /**
@@ -86,11 +82,31 @@ const QuestionnaireTable = () => {
   };
 
   /**
+   * Function to handle select Questionnaire from x-data-grid as a row
+   *
+   * @param params
+   */
+  const handleRowClick = (params: GridRowParams) => {
+    if (!adminMode) {
+      setSelectedQuestionnaire(params.row as Questionnaire);
+    }
+  };
+
+  /**
+   * Function to handle open editor for Questionnaire
+   */
+  const handleEditClick = (questionnaire: Questionnaire) => {
+    setSelectedQuestionnaire(questionnaire);
+  };
+
+  /**
    * Function to render the confirm delete dialog
    */
   const renderConfirmDeleteDialog = () => (
     <Dialog open={dialogOpen} onClose={handleCloseDialog}>
-      <DialogTitle>{strings.formatString(strings.questionnaireTable.confirmDeleteTitle, deleteTitle ?? "")}</DialogTitle>
+      <DialogTitle>
+        {strings.formatString(strings.questionnaireTable.confirmDeleteTitle, deleteTitle ?? "")}
+      </DialogTitle>
       <DialogActions>
         <Button onClick={handleCloseDialog} color="primary">
           {strings.questionnaireTable.cancel}
@@ -112,7 +128,12 @@ const QuestionnaireTable = () => {
           flex: 2.5,
           renderCell: (params: GridRenderCellParams) => (
             <>
-              <Button variant="outlined" color="success" sx={{ mr: 1 }} disabled>
+              <Button
+                variant="outlined"
+                color="success"
+                onClick={() => handleEditClick(params.row as Questionnaire)}
+                sx={{ mr: 1 }}
+              >
                 <EditIcon sx={{ color: "success.main", mr: 1 }} />
                 {strings.questionnaireTable.edit}
               </Button>
@@ -137,7 +158,7 @@ const QuestionnaireTable = () => {
 
   return (
     <>
-      <Paper style={{ height: 500, width: "100%" }}>
+      <Paper style={{ minHeight: 500, maxHeight: "auto", width: "100%", overflow: "auto" }}>
         {loading && (
           <CircularProgress
             size={50}
@@ -149,13 +170,21 @@ const QuestionnaireTable = () => {
             }}
           />
         )}
-        <DataGrid
-          rows={questionnaires}
-          columns={columns}
-          pagination
-          getRowId={(row) => row.id || ""}
-          disableRowSelectionOnClick
-        />
+        {!selectedQuestionnaire && !dialogOpen ? (
+          <DataGrid
+            rows={questionnaires}
+            columns={columns}
+            pagination
+            getRowId={(row) => row.id || ""}
+            disableRowSelectionOnClick
+            onRowClick={!adminMode ? handleRowClick : undefined}
+          />
+        ) : (
+          <QuestionnaireInteractionScreen
+            questionnaire={selectedQuestionnaire}
+            onBack={() => setSelectedQuestionnaire(null)}
+          />
+        )}
       </Paper>
       {renderConfirmDeleteDialog()}
     </>
