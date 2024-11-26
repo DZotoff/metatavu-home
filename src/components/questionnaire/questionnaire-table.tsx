@@ -1,6 +1,16 @@
-import { Paper, Button, CircularProgress, Dialog, DialogActions, DialogTitle } from "@mui/material";
+import {
+  Paper,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  Typography
+} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect } from "react";
 import type { Questionnaire } from "src/generated/homeLambdasClient";
 import strings from "src/localization/strings";
@@ -18,6 +28,7 @@ import QuestionnaireInteractionScreen from "src/components/questionnaire/questio
  */
 const QuestionnaireTable = () => {
   const adminMode = UserRoleUtils.adminMode();
+  const [mode, setMode] = useState<"view" | "edit" | "preview">("view");
   const { questionnairesApi } = useLambdasApi();
   const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([]);
   const [loading, setLoading] = useState(false);
@@ -89,6 +100,7 @@ const QuestionnaireTable = () => {
   const handleRowClick = (params: GridRowParams) => {
     if (!adminMode) {
       setSelectedQuestionnaire(params.row as Questionnaire);
+      setMode("view");
     }
   };
 
@@ -97,6 +109,7 @@ const QuestionnaireTable = () => {
    */
   const handleEditClick = (questionnaire: Questionnaire) => {
     setSelectedQuestionnaire(questionnaire);
+    setMode("edit");
   };
 
   /**
@@ -152,13 +165,19 @@ const QuestionnaireTable = () => {
           field: "status",
           headerName: `${strings.questionnaireTable.status}`,
           flex: 1,
-          TODO: "Here we should render the status of the questionnaire: Users should be able to see if they have completed the questionnaire or not. Admin should be able to see the status of each questionnaire, including the number of employees who have already passed the current questionnaire."
+          renderCell: (params: GridRenderCellParams) =>
+            params.row.passedUsers ? (
+              <CheckCircleIcon sx={{ color: "green" }} />
+            ) : (
+              <CloseIcon sx={{ color: "red" }} />
+            )
+            FIXME: "Needs checking that loggedin User is in Questionnaires.passedUsers"
         }
   ];
 
   return (
     <>
-      <Paper style={{ minHeight: 500, maxHeight: "auto", width: "100%", overflow: "auto" }}>
+      <Paper style={{ minHeight: 200, maxHeight: "auto", width: "100%", overflow: "auto" }}>
         {loading && (
           <CircularProgress
             size={50}
@@ -170,8 +189,16 @@ const QuestionnaireTable = () => {
             }}
           />
         )}
+
+        <Typography sx={{ margin: 2 }} variant="h4" justifyContent={"center"}>
+          {selectedQuestionnaire
+            ? selectedQuestionnaire.title
+            : strings.questionnaireScreen.currentQuestionnaires}
+        </Typography>
+
         {!selectedQuestionnaire && !dialogOpen ? (
           <DataGrid
+            sx={{ margin: 0 }}
             rows={questionnaires}
             columns={columns}
             pagination
@@ -182,6 +209,7 @@ const QuestionnaireTable = () => {
         ) : (
           <QuestionnaireInteractionScreen
             questionnaire={selectedQuestionnaire}
+            mode={mode}
             onBack={() => setSelectedQuestionnaire(null)}
           />
         )}
