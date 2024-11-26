@@ -190,13 +190,11 @@ const QuestionnaireTable = () => {
             }}
           />
         )}
-
         <Typography sx={{ margin: 2 }} variant="h4" justifyContent={"center"}>
           {selectedQuestionnaire
             ? selectedQuestionnaire.title
             : strings.questionnaireScreen.currentQuestionnaires}
         </Typography>
-
         {!selectedQuestionnaire && !dialogOpen ? (
           <DataGrid
             sx={{ margin: 0 }}

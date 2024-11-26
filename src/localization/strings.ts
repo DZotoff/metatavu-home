@@ -360,6 +360,13 @@ export interface Localized extends LocalizedStringsMethods {
     cancel: string;
     confirm: string;
   }; 
+  /**
+   * Translations related to Questionnaire Interaction Screen
+   */
+  questionnaireInteractionScreen: {
+    goBack: string;
+    submit: string;
+  };
 }
 
 /**

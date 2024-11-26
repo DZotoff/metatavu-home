@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import type { AnswerOption, Question, Questionnaire } from "src/generated/homeLambdasClient";
+import strings from "src/localization/strings";
 
 interface QuestionnaireInteractionScreenProps {
   questionnaire: Questionnaire | null;
@@ -117,7 +118,7 @@ const QuestionnaireInteractionScreen: React.FC<QuestionnaireInteractionScreenPro
                 onClick={onBack}
                 startIcon={<KeyboardReturn />}
               >
-                GO BACK
+                {strings.questionnaireInteractionScreen.goBack}
               </Button>
               <Button
                 sx={{ alignItems: "center" }}
@@ -126,7 +127,7 @@ const QuestionnaireInteractionScreen: React.FC<QuestionnaireInteractionScreenPro
                 color="success"
                 onClick={handleSubmit}
               >
-                Submit Responses
+                {strings.questionnaireInteractionScreen.submit}
               </Button>
             </Box>
           </CardContent>
@@ -137,7 +138,8 @@ const QuestionnaireInteractionScreen: React.FC<QuestionnaireInteractionScreenPro
     if (mode === "edit") {
       return (
         <Typography variant="h5" align="left" sx={{ mt: 4, ml: 4 }}>
-          {questionnaire.description}; FIXME: "Edit mode is not implemented yet"
+          {questionnaire.description}; 
+          {/* FIXME: "Edit mode is not implemented yet" */}
         </Typography>
       );
     }
@@ -145,7 +147,8 @@ const QuestionnaireInteractionScreen: React.FC<QuestionnaireInteractionScreenPro
     if (mode === "preview") {
       return (
         <Typography variant="h5" align="left" sx={{ mt: 4, ml: 4 }}>
-          {questionnaire.description}; FIXME: "Preview mode is not implemented yet"
+          {questionnaire.description}; 
+          {/* FIXME: "Preview mode is not implemented yet" */}
         </Typography>
       );
     }
