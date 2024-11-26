@@ -60,8 +60,9 @@ const QuestionnaireInteractionScreen: React.FC<QuestionnaireInteractionScreenPro
     });
     console.log(`What you need to pass: ${questionnaire.passScore}`);
     console.log(`Number of correct answers: ${correctAnswersCount}`);
-    FIXME: "Saving the results is not implemented yet";
   };
+
+  // FIXME: "Saving the results is not implemented yet";
 
   const renderInteractionScreen = () => {
     if (mode === "view") {

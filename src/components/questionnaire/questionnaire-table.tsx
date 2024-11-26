@@ -170,10 +170,11 @@ const QuestionnaireTable = () => {
               <CheckCircleIcon sx={{ color: "green" }} />
             ) : (
               <CloseIcon sx={{ color: "red" }} />
-            )
-            FIXME: "Needs checking that loggedin User is in Questionnaires.passedUsers"
+            )   
         }
   ];
+
+  // FIXME: Needs checking that loggedin User is in Questionnaires.passedUsers
 
   return (
     <>
