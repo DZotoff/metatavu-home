@@ -20,6 +20,8 @@ import { useLambdasApi } from "src/hooks/use-api";
 import { useSetAtom } from "jotai";
 import { errorAtom } from "src/atoms/error";
 import QuestionnaireInteractionScreen from "src/components/questionnaire/questionnaire-interaction-screen";
+import { QuestionnairePreviewModes } from "src/types/index";
+import { useNavigate } from "react-router";
 
 /**
  * Questionnaire Table Component
@@ -28,7 +30,8 @@ import QuestionnaireInteractionScreen from "src/components/questionnaire/questio
  */
 const QuestionnaireTable = () => {
   const adminMode = UserRoleUtils.adminMode();
-  const [mode, setMode] = useState<"view" | "edit" | "preview">("view");
+  const navigate = useNavigate();
+  const [mode, setMode] = useState<QuestionnairePreviewModes>(QuestionnairePreviewModes.FILL);
   const { questionnairesApi } = useLambdasApi();
   const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([]);
   const [loading, setLoading] = useState(false);
@@ -100,16 +103,19 @@ const QuestionnaireTable = () => {
   const handleRowClick = (params: GridRowParams) => {
     if (!adminMode) {
       setSelectedQuestionnaire(params.row as Questionnaire);
-      setMode("view");
+      setMode(QuestionnairePreviewModes.FILL);
+      navigate(`/questionnaire/fill/${params.row.id}`);
     }
   };
 
   /**
    * Function to handle open editor for Questionnaire
+   * 
+   * @param questionnaire
    */
   const handleEditClick = (questionnaire: Questionnaire) => {
     setSelectedQuestionnaire(questionnaire);
-    setMode("edit");
+    setMode(QuestionnairePreviewModes.EDIT);
   };
 
   /**
@@ -142,6 +148,7 @@ const QuestionnaireTable = () => {
           renderCell: (params: GridRenderCellParams) => (
             <>
               <Button
+                name="edit"
                 variant="outlined"
                 color="success"
                 onClick={() => handleEditClick(params.row as Questionnaire)}
@@ -151,6 +158,7 @@ const QuestionnaireTable = () => {
                 {strings.questionnaireTable.edit}
               </Button>
               <Button
+                name="delete"
                 variant="contained"
                 color="secondary"
                 onClick={() => handleOpenDialog(params.row.id, params.row.title)}
@@ -170,7 +178,7 @@ const QuestionnaireTable = () => {
               <CheckCircleIcon sx={{ color: "green" }} />
             ) : (
               <CloseIcon sx={{ color: "red" }} />
-            )   
+            )
         }
   ];
 
@@ -209,6 +217,7 @@ const QuestionnaireTable = () => {
           <QuestionnaireInteractionScreen
             questionnaire={selectedQuestionnaire}
             mode={mode}
+            setMode={setMode}
             onBack={() => setSelectedQuestionnaire(null)}
           />
         )}

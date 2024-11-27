@@ -5,6 +5,7 @@ import {
   Card,
   CardContent,
   Checkbox,
+  CircularProgress,
   Divider,
   FormControlLabel,
   Typography
@@ -12,29 +13,50 @@ import {
 import { useState } from "react";
 import type { AnswerOption, Question, Questionnaire } from "src/generated/homeLambdasClient";
 import strings from "src/localization/strings";
+import type { QuestionnairePreviewModes } from "src/types";
+import QuestionnaireFillMode from "./questionnaires-fill-mode";
 
-interface QuestionnaireInteractionScreenProps {
+/**
+ * Component properties
+ */
+interface Props {
   questionnaire: Questionnaire | null;
-  mode: "view" | "edit" | "preview";
+  mode: QuestionnairePreviewModes;
+  setMode: (mode: QuestionnairePreviewModes) => void;
   onBack: () => void;
 }
 
 /**
  *  Screen for the user to interact with the questionnaire; fill, edit and preview
+ *
+ * @param props component properties
  */
-const QuestionnaireInteractionScreen: React.FC<QuestionnaireInteractionScreenProps> = ({
-  questionnaire,
-  mode,
-  onBack
-}) => {
+const QuestionnaireInteractionScreen = ({ questionnaire, mode, setMode, onBack }: Props) => {
   if (!questionnaire) {
-    return <Typography variant="h4">Loading...</Typography>;
+    return (
+      <CircularProgress
+        size={50}
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)"
+        }}
+      />
+    );
   }
 
-  const [responses, setResponses] = useState<Record<string, string[]>>({});
+  const [userResponses, setUserResponses] = useState<Record<string, string[]>>({});
 
+  /**
+   * Function to handle the change of the option
+   *
+   * @param questionId
+   * @param optionLabel
+   * @param isChecked
+   */
   const handleOptionChange = (questionId: string, optionLabel: string, isChecked: boolean) => {
-    setResponses((prevResponses) => {
+    setUserResponses((prevResponses) => {
       const selectedOptions = prevResponses[questionId] || [];
       return {
         ...prevResponses,
@@ -45,10 +67,13 @@ const QuestionnaireInteractionScreen: React.FC<QuestionnaireInteractionScreenPro
     });
   };
 
+  /**
+   * Function to handle the submission of the questionnaire
+   */
   const handleSubmit = () => {
     let correctAnswersCount = 0;
     questionnaire.questions.forEach((question) => {
-      const userAnswers = responses[question.questionText] || [];
+      const userAnswers = userResponses[question.questionText] || [];
       const correctAnswers = question.answerOptions
         .filter((option) => option.isCorrect)
         .map((option) => option.label);
@@ -59,102 +84,71 @@ const QuestionnaireInteractionScreen: React.FC<QuestionnaireInteractionScreenPro
         correctAnswersCount++;
       }
     });
-    console.log(`What you need to pass: ${questionnaire.passScore}`);
-    console.log(`Number of correct answers: ${correctAnswersCount}`);
+    console.log(`Correct answers: ${correctAnswersCount} / ${questionnaire.questions.length}`);
   };
 
   // FIXME: "Saving the results is not implemented yet";
 
-  const renderInteractionScreen = () => {
-    if (mode === "view") {
-      return (
-        <Card>
-          <CardContent>
-            <Typography variant="h5" align="left" sx={{ mt: 4, ml: 4 }}>
-              {questionnaire.description}
-            </Typography>
-            <Box sx={{ marginTop: 4 }}>
-              {questionnaire.questions.map((question: Question) => (
-                <Box key={question.questionText} sx={{ mb: 4, ml: 4, mr: 4 }}>
-                  <Typography variant="h6">{question.questionText}</Typography>
-                  <Box>
-                    {question.answerOptions.map((option: AnswerOption) => (
-                      <FormControlLabel
-                        key={option.label}
-                        control={
-                          <Checkbox
-                            checked={
-                              responses[question.questionText]?.includes(option.label) || false
-                            }
-                            onChange={(e) =>
-                              handleOptionChange(
-                                question.questionText,
-                                option.label,
-                                e.target.checked
-                              )
-                            }
-                          />
-                        }
-                        label={option.label}
-                        sx={{ display: "block", marginLeft: 2 }}
-                      />
-                    ))}
-                  </Box>
-                  <Divider sx={{ marginY: 2 }} />
-                </Box>
-              ))}
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                width: "100%",
-                p: 3,
-                justifyContent: "space-between"
-              }}
-            >
-              <Button
-                sx={{ alignItems: "center" }}
-                size="large"
-                onClick={onBack}
-                startIcon={<KeyboardReturn />}
-              >
-                {strings.questionnaireInteractionScreen.goBack}
-              </Button>
-              <Button
-                sx={{ alignItems: "center" }}
-                size="large"
-                variant="contained"
-                color="success"
-                onClick={handleSubmit}
-              >
-                {strings.questionnaireInteractionScreen.submit}
-              </Button>
-            </Box>
-          </CardContent>
-        </Card>
-      );
-    }
-
-    if (mode === "edit") {
-      return (
-        <Typography variant="h5" align="left" sx={{ mt: 4, ml: 4 }}>
-          {questionnaire.description}; 
-          {/* FIXME: "Edit mode is not implemented yet" */}
-        </Typography>
-      );
-    }
-
-    if (mode === "preview") {
-      return (
-        <Typography variant="h5" align="left" sx={{ mt: 4, ml: 4 }}>
-          {questionnaire.description}; 
-          {/* FIXME: "Preview mode is not implemented yet" */}
-        </Typography>
-      );
+  /**
+   * Function to render the content of the card
+   */
+  const renderCardContent = () => {
+    switch (mode) {
+      case "FILL":
+        return (
+          <QuestionnaireFillMode
+            questionnaire={questionnaire}
+            userResponses={userResponses}
+            handleOptionChange={handleOptionChange}
+          />
+        );
+      default:
+        return null;
     }
   };
 
-  return <>{renderInteractionScreen()}</>;
+  const renderButtons = () => {
+    switch (mode) {
+      case "FILL":
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              width: "100%",
+              p: 3,
+              justifyContent: "space-between"
+            }}
+          >
+            <Button
+              sx={{ alignItems: "center" }}
+              size="large"
+              onClick={onBack}
+              startIcon={<KeyboardReturn />}
+            >
+              {strings.questionnaireInteractionScreen.goBack}
+            </Button>
+            <Button
+              sx={{ alignItems: "center" }}
+              size="large"
+              variant="contained"
+              color="success"
+              onClick={handleSubmit}
+            >
+              {strings.questionnaireInteractionScreen.submit}
+            </Button>
+          </Box>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <>
+      {renderCardContent()}
+      {renderButtons()}
+    </>
+  );
 };
 
 export default QuestionnaireInteractionScreen;
