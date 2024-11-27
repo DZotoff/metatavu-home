@@ -10,20 +10,24 @@ import {
   FormControlLabel,
   Typography
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { AnswerOption, Question, Questionnaire } from "src/generated/homeLambdasClient";
 import strings from "src/localization/strings";
 import type { QuestionnairePreviewModes } from "src/types";
 import QuestionnaireFillMode from "./questionnaires-fill-mode";
+import { useSetAtom } from "jotai";
+import { useParams } from "react-router";
+import { errorAtom } from "src/atoms/error";
+import { useLambdasApi } from "src/hooks/use-api";
+import { useNavigate } from "react-router-dom";
 
 /**
  * Component properties
  */
 interface Props {
-  questionnaire: Questionnaire | null;
   mode: QuestionnairePreviewModes;
-  setMode: (mode: QuestionnairePreviewModes) => void;
-  onBack: () => void;
+  setMode?: (mode: QuestionnairePreviewModes) => void;
+  onBack?: () => void;
 }
 
 /**
@@ -31,8 +35,30 @@ interface Props {
  *
  * @param props component properties
  */
-const QuestionnaireInteractionScreen = ({ questionnaire, mode, setMode, onBack }: Props) => {
-  if (!questionnaire) {
+const QuestionnaireInteractionScreen = ({ mode, setMode, onBack }: Props) => {
+  const { id } = useParams<{ id: string }>();
+  const { questionnairesApi } = useLambdasApi();
+  const setError = useSetAtom(errorAtom);
+  const [questionnaire, setQuestionnaire] = useState<Questionnaire>([]);
+  const [loading, setLoading] = useState(true);
+  const [userResponses, setUserResponses] = useState<Record<string, string[]>>({});
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    const fetchQuestionnaire = async () => {
+      setLoading(true);
+      try {
+        const fetchedQuestionnaire = await questionnairesApi.getQuestionnairesById({ id });
+        setQuestionnaire(fetchedQuestionnaire);
+      } catch (error) {
+        setError(`${strings.error.questionnaireLoadFailed}, ${error}`);
+      }
+      setLoading(false);
+    };
+    fetchQuestionnaire();
+  }, [id, questionnairesApi, setError]);
+  
+  if (loading) {
     return (
       <CircularProgress
         size={50}
@@ -46,23 +72,21 @@ const QuestionnaireInteractionScreen = ({ questionnaire, mode, setMode, onBack }
     );
   }
 
-  const [userResponses, setUserResponses] = useState<Record<string, string[]>>({});
-
   /**
-   * Function to handle the change of the option
+   * Function to handle the change of the answer options
    *
-   * @param questionId
-   * @param optionLabel
-   * @param isChecked
+   * @param questionText
+   * @param answerLabel
+   * @param isSelected
    */
-  const handleOptionChange = (questionId: string, optionLabel: string, isChecked: boolean) => {
+  const handleOptionChange = (questionText: string, answerLabel: string, isSelected: boolean) => {
     setUserResponses((prevResponses) => {
-      const selectedOptions = prevResponses[questionId] || [];
+      const selectedAnswerLabels = prevResponses[questionText] || [];
       return {
         ...prevResponses,
-        [questionId]: isChecked
-          ? [...selectedOptions, optionLabel]
-          : selectedOptions.filter((label) => label !== optionLabel)
+        [questionText]: isSelected
+          ? [...selectedAnswerLabels, answerLabel]
+          : selectedAnswerLabels.filter((label) => label !== answerLabel)
       };
     });
   };
@@ -122,7 +146,7 @@ const QuestionnaireInteractionScreen = ({ questionnaire, mode, setMode, onBack }
             <Button
               sx={{ alignItems: "center" }}
               size="large"
-              onClick={onBack}
+              onClick={() => navigate(-1)}
               startIcon={<KeyboardReturn />}
             >
               {strings.questionnaireInteractionScreen.goBack}

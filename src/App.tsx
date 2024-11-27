@@ -20,8 +20,8 @@ import RestrictedContentProvider from "./components/providers/restricted-content
 import SprintViewScreen from "./components/screens/sprint-view-screen";
 import QuestionnaireScreen from "./components/screens/questionnaire-screen";
 import NewQuestionnaireScreen from "./components/screens/new-questionnaire-screen";
-import QuestionnaireFillMode from "./components/questionnaire/questionnaires-fill-mode";
 import QuestionnaireInteractionScreen from "./components/questionnaire/questionnaire-interaction-screen";
+import { QuestionnairePreviewModes } from "./types";
 
 /**
  * Application component
@@ -61,7 +61,7 @@ const App = () => {
         },
         {
           path: "/questionnaire/:id/fill",
-          element: <QuestionnaireInteractionScreen />
+          element: <QuestionnaireInteractionScreen mode={QuestionnairePreviewModes.FILL} />
         }
       ]
     },
@@ -97,6 +97,10 @@ const App = () => {
         {
           path: "/admin/newQuestionnaire",
           element: <NewQuestionnaireScreen />
+        },
+        {
+          path: "/admin/questionnaire/:id/edit",
+          element: <QuestionnaireInteractionScreen mode={QuestionnairePreviewModes.EDIT} />
         }
       ]
     }

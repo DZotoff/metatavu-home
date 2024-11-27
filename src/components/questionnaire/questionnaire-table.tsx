@@ -31,7 +31,7 @@ import { useNavigate } from "react-router";
 const QuestionnaireTable = () => {
   const adminMode = UserRoleUtils.adminMode();
   const navigate = useNavigate();
-  const [mode, setMode] = useState<QuestionnairePreviewModes>(QuestionnairePreviewModes.FILL);
+  const [, setMode] = useState<QuestionnairePreviewModes>(QuestionnairePreviewModes.FILL);
   const { questionnairesApi } = useLambdasApi();
   const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([]);
   const [loading, setLoading] = useState(false);
@@ -101,11 +101,10 @@ const QuestionnaireTable = () => {
    * @param params
    */
   const handleRowClick = (params: GridRowParams) => {
-    if (!adminMode) {
       setSelectedQuestionnaire(params.row as Questionnaire);
       setMode(QuestionnairePreviewModes.FILL);
-      navigate(`/questionnaire/fill/${params.row.id}`);
-    }
+      navigate(`/questionnaire/${params.row.id}/fill`);
+    
   };
 
   /**
@@ -116,6 +115,7 @@ const QuestionnaireTable = () => {
   const handleEditClick = (questionnaire: Questionnaire) => {
     setSelectedQuestionnaire(questionnaire);
     setMode(QuestionnairePreviewModes.EDIT);
+    navigate(`${questionnaire.id}/edit`);
   };
 
   /**
@@ -203,7 +203,6 @@ const QuestionnaireTable = () => {
             ? selectedQuestionnaire.title
             : strings.questionnaireScreen.currentQuestionnaires}
         </Typography>
-        {!selectedQuestionnaire && !dialogOpen ? (
           <DataGrid
             sx={{ margin: 0 }}
             rows={questionnaires}
@@ -211,16 +210,8 @@ const QuestionnaireTable = () => {
             pagination
             getRowId={(row) => row.id || ""}
             disableRowSelectionOnClick
-            onRowClick={!adminMode ? handleRowClick : undefined}
+            onRowClick={adminMode ? undefined : handleRowClick}
           />
-        ) : (
-          <QuestionnaireInteractionScreen
-            questionnaire={selectedQuestionnaire}
-            mode={mode}
-            setMode={setMode}
-            onBack={() => setSelectedQuestionnaire(null)}
-          />
-        )}
       </Paper>
       {renderConfirmDeleteDialog()}
     </>
