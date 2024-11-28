@@ -129,6 +129,7 @@ const QuestionnaireInteractionScreen = ({ mode, setMode, onBack }: Props) => {
         correctAnswersCount++;
       }
     });
+    navigate(-1);
     console.log(`Correct answers: ${correctAnswersCount} / ${questionnaire.questions.length}`);
   };
 

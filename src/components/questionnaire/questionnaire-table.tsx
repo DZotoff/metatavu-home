@@ -11,17 +11,21 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CloseIcon from "@mui/icons-material/Close";
+import PendingIcon from "@mui/icons-material/Pending";
 import { useState, useEffect } from "react";
 import type { Questionnaire } from "src/generated/homeLambdasClient";
 import strings from "src/localization/strings";
 import UserRoleUtils from "src/utils/user-role-utils";
 import { DataGrid, type GridRowParams, type GridRenderCellParams } from "@mui/x-data-grid";
 import { useLambdasApi } from "src/hooks/use-api";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { errorAtom } from "src/atoms/error";
 import QuestionnaireInteractionScreen from "src/components/questionnaire/questionnaire-interaction-screen";
 import { QuestionnairePreviewModes } from "src/types/index";
 import { useNavigate } from "react-router";
+import { usersAtom } from "src/atoms/user";
+import { userProfileAtom } from "src/atoms/auth";
+import type { User } from "src/generated/homeLambdasClient";
 
 /**
  * Questionnaire Table Component
@@ -40,6 +44,11 @@ const QuestionnaireTable = () => {
   const [deleteTitle, setDeleteTitle] = useState<string | null>(null);
   const [selectedQuestionnaire, setSelectedQuestionnaire] = useState<Questionnaire | null>(null);
   const setError = useSetAtom(errorAtom);
+  const users = useAtomValue(usersAtom);
+  const userProfile = useAtomValue(userProfileAtom);
+
+  const loggedInUser = users.find((user: User) => user.id === userProfile?.id);
+  console.log(loggedInUser);
 
   useEffect(() => {
     const fetchQuestionnaires = async () => {
@@ -101,20 +110,35 @@ const QuestionnaireTable = () => {
    * @param params
    */
   const handleRowClick = (params: GridRowParams) => {
-      setSelectedQuestionnaire(params.row as Questionnaire);
-      setMode(QuestionnairePreviewModes.FILL);
-      navigate(`/questionnaire/${params.row.id}/fill`);
+    setSelectedQuestionnaire(params.row as Questionnaire);
+    setMode(QuestionnairePreviewModes.FILL);
+    navigate(`/questionnaire/${params.row.id}/fill`);
   };
 
   /**
    * Function to handle open editor for Questionnaire
-   * 
+   *
    * @param questionnaire
    */
   const handleEditClick = (questionnaire: Questionnaire) => {
     setSelectedQuestionnaire(questionnaire);
     setMode(QuestionnairePreviewModes.EDIT);
     navigate(`${questionnaire.id}/edit`);
+  };
+
+  /**
+   * Function to render the status cell to check if LoggerInUser has passed the questionnaire
+   *
+   * @param params
+   */
+  const renderStatusCell = (params: GridRenderCellParams) => {
+    const passedQuestionnaires = loggedInUser?.attributes?.passedQuestionnaires || [];
+    const userHasPassed = passedQuestionnaires.includes(params.row.id);
+    return userHasPassed ? (
+      <CheckCircleIcon sx={{ color: "green" }} />
+    ) : (
+      <PendingIcon sx={{ color: "gray" }} />
+    );
   };
 
   /**
@@ -172,16 +196,9 @@ const QuestionnaireTable = () => {
           field: "status",
           headerName: `${strings.questionnaireTable.status}`,
           flex: 1,
-          renderCell: (params: GridRenderCellParams) =>
-            params.row.passedUsers ? (
-              <CheckCircleIcon sx={{ color: "green" }} />
-            ) : (
-              <CloseIcon sx={{ color: "red" }} />
-            )
+          renderCell: renderStatusCell
         }
   ];
-
-  // FIXME: Needs checking that loggedin User is in Questionnaires.passedUsers
 
   return (
     <>
@@ -202,15 +219,15 @@ const QuestionnaireTable = () => {
             ? selectedQuestionnaire.title
             : strings.questionnaireScreen.currentQuestionnaires}
         </Typography>
-          <DataGrid
-            sx={{ margin: 0 }}
-            rows={questionnaires}
-            columns={columns}
-            pagination
-            getRowId={(row) => row.id || ""}
-            disableRowSelectionOnClick
-            onRowClick={adminMode ? undefined : handleRowClick}
-          />
+        <DataGrid
+          sx={{ margin: 0 }}
+          rows={questionnaires}
+          columns={columns}
+          pagination
+          getRowId={(row) => row.id || ""}
+          disableRowSelectionOnClick
+          onRowClick={adminMode ? undefined : handleRowClick}
+        />
       </Paper>
       {renderConfirmDeleteDialog()}
     </>
