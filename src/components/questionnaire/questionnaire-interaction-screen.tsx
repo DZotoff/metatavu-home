@@ -73,13 +73,13 @@ const QuestionnaireInteractionScreen = ({ mode, setMode, onBack }: Props) => {
   }
 
   /**
-   * Function to handle the change of the answer options
+   * Function to handle the change of the answer option checkboxes
    *
    * @param questionText
    * @param answerLabel
    * @param isSelected
    */
-  const handleOptionChange = (questionText: string, answerLabel: string, isSelected: boolean) => {
+  const handleCheckboxChange = (questionText: string, answerLabel: string, isSelected: boolean) => {
     setUserResponses((prevResponses) => {
       const selectedAnswerLabels = prevResponses[questionText] || [];
       return {
@@ -89,6 +89,19 @@ const QuestionnaireInteractionScreen = ({ mode, setMode, onBack }: Props) => {
           : selectedAnswerLabels.filter((label) => label !== answerLabel)
       };
     });
+  };
+
+  /**
+   * Function to handle the change of the answer option radio buttons 
+   *
+   * @param questionText
+   * @param answerLabel
+   */
+  const handleRadioChange = (questionText: string, answerLabel: string) => {
+    setUserResponses((prevResponses) => ({
+      ...prevResponses,
+      [questionText]: [answerLabel]
+    }));
   };
 
   /**
@@ -123,7 +136,8 @@ const QuestionnaireInteractionScreen = ({ mode, setMode, onBack }: Props) => {
           <QuestionnaireFillMode
             questionnaire={questionnaire}
             userResponses={userResponses}
-            handleOptionChange={handleOptionChange}
+            handleCheckboxChange={handleCheckboxChange}
+            handleRadioChange={handleRadioChange}
           />
         );
       default:

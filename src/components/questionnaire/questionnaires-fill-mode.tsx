@@ -5,51 +5,73 @@ import {
   Box,
   FormControlLabel,
   Checkbox,
-  Divider
+  Divider,
+  Radio
 } from "@mui/material";
 import type { AnswerOption, Question, Questionnaire } from "src/generated/homeLambdasClient";
 
 interface Props {
   questionnaire: Questionnaire;
   userResponses: Record<string, string[]>;
-  handleOptionChange: (questionId: string, optionLabel: string, isChecked: boolean) => void;
+  handleCheckboxChange: (questionText: string, answerLabel: string, isSelected: boolean) => void;
+  handleRadioChange: (questionText: string, answerLabel: string) => void;
 }
 
-const QuestionnaireFillMode = ({ questionnaire, userResponses, handleOptionChange }: Props) => (
-  <Card>
-    <CardContent>
-      <Typography variant="h5" align="left" sx={{ mt: 4, ml: 4 }}>
-        {questionnaire.description}
-      </Typography>
-      <Box sx={{ marginTop: 4 }}>
-        {questionnaire.questions.map((question: Question) => (
-          <Box key={question.questionText} sx={{ mb: 4, ml: 4, mr: 4 }}>
-            <Typography variant="h6">{question.questionText}</Typography>
-            <Box>
-              {question.answerOptions.map((option: AnswerOption) => (
-                <FormControlLabel
-                  key={option.label}
-                  control={
-                    <Checkbox
-                      checked={
-                        userResponses[question.questionText]?.includes(option.label) || false
+const QuestionnaireFillMode = ({ questionnaire, userResponses, handleCheckboxChange, handleRadioChange }: Props) => {
+  const getCorrectAnswerCount = (question: Question) => {
+    return question.answerOptions.filter(option => option.isCorrect).length;
+  };
+
+  return (
+    <Card>
+      <CardContent>
+        <Typography variant="h5" align="left" sx={{ mt: 4, ml: 4 }}>
+          {questionnaire.description}
+        </Typography>
+        <Box sx={{ marginTop: 4 }}>
+          {questionnaire.questions.map((question: Question) => {
+            const correctAnswerCount = getCorrectAnswerCount(question);
+            const selectedOptions = userResponses[question.questionText] || [];
+            const maxSelected = selectedOptions.length >= correctAnswerCount;
+
+            return (
+              <Box key={question.questionText} sx={{ mb: 4, ml: 4, mr: 4 }}>
+                <Typography variant="h6">{question.questionText}</Typography>
+                <Box>
+                  {question.answerOptions.map((option: AnswerOption) => (
+                    <FormControlLabel
+                      key={option.label}
+                      control={
+                        correctAnswerCount === 1 ? (
+                          <Radio
+                            checked={selectedOptions.includes(option.label)}
+                            onChange={(e) =>
+                              handleRadioChange(question.questionText, option.label, e.target.checked)
+                            }
+                          />
+                        ) : (
+                          <Checkbox
+                            checked={selectedOptions.includes(option.label)}
+                            onChange={(e) =>
+                              handleCheckboxChange(question.questionText, option.label, e.target.checked)
+                            }
+                            disabled={!selectedOptions.includes(option.label) && maxSelected}
+                          />
+                        )
                       }
-                      onChange={(e) =>
-                        handleOptionChange(question.questionText, option.label, e.target.checked)
-                      }
+                      label={option.label}
+                      sx={{ display: "block", marginLeft: 2 }}
                     />
-                  }
-                  label={option.label}
-                  sx={{ display: "block", marginLeft: 2 }}
-                />
-              ))}
-            </Box>
-            <Divider sx={{ marginY: 2 }} />
-          </Box>
-        ))}
-      </Box>
-    </CardContent>
-  </Card>
-);
+                  ))}
+                </Box>
+                <Divider sx={{ marginY: 2 }} />
+              </Box>
+            );
+          })}
+        </Box>
+      </CardContent>
+    </Card>
+  );
+};
 
 export default QuestionnaireFillMode;
