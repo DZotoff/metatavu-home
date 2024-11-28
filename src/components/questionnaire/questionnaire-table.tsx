@@ -104,7 +104,6 @@ const QuestionnaireTable = () => {
       setSelectedQuestionnaire(params.row as Questionnaire);
       setMode(QuestionnairePreviewModes.FILL);
       navigate(`/questionnaire/${params.row.id}/fill`);
-    
   };
 
   /**

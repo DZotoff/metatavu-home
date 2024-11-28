@@ -31,6 +31,13 @@ interface Props {
 }
 
 /**
+ * Interface for the user responses
+ */
+interface UserResponses {
+  [questionText: string]: string[];
+}
+
+/**
  *  Screen for the user to interact with the questionnaire; fill, edit and preview
  *
  * @param props component properties
@@ -41,7 +48,7 @@ const QuestionnaireInteractionScreen = ({ mode, setMode, onBack }: Props) => {
   const setError = useSetAtom(errorAtom);
   const [questionnaire, setQuestionnaire] = useState<Questionnaire>([]);
   const [loading, setLoading] = useState(true);
-  const [userResponses, setUserResponses] = useState<Record<string, string[]>>({});
+  const [userResponses, setUserResponses] = useState<UserResponses>({});
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -50,6 +57,7 @@ const QuestionnaireInteractionScreen = ({ mode, setMode, onBack }: Props) => {
       try {
         const fetchedQuestionnaire = await questionnairesApi.getQuestionnairesById({ id });
         setQuestionnaire(fetchedQuestionnaire);
+        console.log(fetchedQuestionnaire);
       } catch (error) {
         setError(`${strings.error.questionnaireLoadFailed}, ${error}`);
       }
