@@ -1,10 +1,12 @@
 import {
-  Box,
   Button,
   Card,
   CardActions,
   CardContent,
+  Checkbox,
   CircularProgress,
+  Divider,
+  FormControlLabel,
   Grid,
   List,
   ListItem,
@@ -20,7 +22,12 @@ import { Link, useNavigate } from "react-router-dom";
 import NewQuestionnaireCard from "../questionnaire/new-questionnaire-card";
 import { KeyboardReturn } from "@mui/icons-material";
 import UserRoleUtils from "src/utils/user-role-utils";
-import type { Questionnaire, AnswerOption } from "src/generated/homeLambdasClient";
+import {
+  type Questionnaire,
+  type AnswerOption,
+  type Question,
+  AnswerOptionFromJSON
+} from "src/generated/homeLambdasClient";
 import strings from "src/localization/strings";
 import { useLambdasApi } from "src/hooks/use-api";
 import { useSetAtom } from "jotai";
@@ -94,8 +101,23 @@ const NewQuestionnaireScreen = () => {
   const removeQuestionFromPreview = (index: number) => {
     setQuestionnaire((prevQuestionnaire) => ({
       ...prevQuestionnaire,
-      answerOptions: prevQuestionnaire.questions.filter((_, i) => i !== index)
+      questions: prevQuestionnaire.questions.filter((_, i) => i !== index)
     }));
+  };
+
+  /**
+   *
+   */
+  const handleOptionChange = (questionText: string, label: string, isChecked: boolean) => {
+    setResponses((prev) => {
+      const currentResponses = prev[questionText] || [];
+      return {
+        ...prev,
+        [questionText]: isChecked
+          ? [...currentResponses, label]
+          : currentResponses.filter((response) => response !== label)
+      };
+    });
   };
 
   /**
@@ -277,42 +299,47 @@ const NewQuestionnaireScreen = () => {
         }}
       >
         <CardContent>
-          <Grid container sx={{ flexGrow: 1 }}>
-            <Grid item xs={12}>
-              <Typography variant="h4" gutterBottom>
-                {strings.newQuestionnaireScreen.preview}
-              </Typography>
-            </Grid>
-            <Typography variant="h5" gutterBottom>
-              {questionnaire.title}
-            </Typography>
-            {questionnaire.questions.map((q, index) => (
-              <Grid item xs={12} key={index} sx={{ mb: 2 }}>
-                <Card sx={{ p: 2 }}>
-                  <Typography>{q.questionText}</Typography>
-                  <List component="ol">
-                    {q.answerOptions?.map((option, idx) => (
-                      <ListItem component="li" key={idx}>
-                        <ListItemText
-                          primary={`${option.label} ${strings.newQuestionnaireScreen.is} ${
-                            option.isCorrect?.toString() || "false"
-                          }`}
-                        />
-                      </ListItem>
+          <Typography variant="h4" gutterBottom>
+            {questionnaire.title}
+          </Typography>
+          <Typography variant="h5" align="left" sx={{ mt: 2 }}>
+            {questionnaire.description}
+          </Typography>
+          <Divider sx={{ marginY: 2 }} />
+
+          <Box sx={{}}>
+            <Box
+              ssx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}
+            >
+              {questionnaire.questions.map((question: Question, index) => (
+                <Box key={question.questionText} sx={{}}>
+                  <Typography>{question.questionText}</Typography>
+
+                  <Box>
+                    {question.answerOptions.map((option: AnswerOption) => (
+                      <FormControlLabel
+                        key={option.label}
+                        control={<Checkbox checked={option.isCorrect} />}
+                        label={option.label}
+                        sx={{ display: "block", marginLeft: 2 }}
+                      />
                     ))}
-                  </List>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => removeQuestionFromPreview(index)}
-                  >
-                    <DeleteForeverIcon sx={{ color: "red", mr: 2 }} />
-                    {strings.newQuestionnaireScreen.removeFromPreview}
-                  </Button>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+                    <Box>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={() => removeQuestionFromPreview(index)}
+                      >
+                        <DeleteForeverIcon sx={{ color: "red", mr: 2 }} />
+                        {strings.newQuestionnaireScreen.removeFromPreview}
+                      </Button>
+                    </Box>
+                    <Divider sx={{ marginY: 2 }} />
+                  </Box>
+                </Box>
+              ))}
+            </Box>
+          </Box>
         </CardContent>
       </Card>
       {/* Card containing back button */}
