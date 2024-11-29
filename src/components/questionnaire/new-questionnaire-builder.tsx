@@ -1,42 +1,31 @@
 import {
+  Box,
   Button,
   Card,
   CardActions,
   CardContent,
-  Checkbox,
   CircularProgress,
-  Divider,
-  FormControlLabel,
-  Grid,
-  List,
-  ListItem,
-  ListItemText,
   Slider,
   TextField,
   Tooltip,
   Typography
-} from "@mui/material";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+} from "@mui/material"
 import { useState, type ChangeEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import NewQuestionnaireCard from "../questionnaire/new-questionnaire-card";
+import NewQuestionCard from "./new-question-card";
 import { KeyboardReturn } from "@mui/icons-material";
 import UserRoleUtils from "src/utils/user-role-utils";
-import {
-  type Questionnaire,
-  type AnswerOption,
-  type Question,
-  AnswerOptionFromJSON
-} from "src/generated/homeLambdasClient";
+import type { Questionnaire, AnswerOption, Question } from "src/generated/homeLambdasClient";
 import strings from "src/localization/strings";
 import { useLambdasApi } from "src/hooks/use-api";
 import { useSetAtom } from "jotai";
 import { errorAtom } from "src/atoms/error";
+import QuestionnairePreview from "./questionnaire-preview";
 
 /**
- * New Questionnaire Screen component
+ * New Questionnaire component
  */
-const NewQuestionnaireScreen = () => {
+const NewQuestionnaireBuilder = () => {
   const adminMode = UserRoleUtils.adminMode();
   const navigate = useNavigate();
   const { questionnairesApi } = useLambdasApi();
@@ -106,18 +95,16 @@ const NewQuestionnaireScreen = () => {
   };
 
   /**
+   * Function to edit question in the questionnaire that is being built
    *
+   * @param index
+   * @param updatedQuestion
    */
-  const handleOptionChange = (questionText: string, label: string, isChecked: boolean) => {
-    setResponses((prev) => {
-      const currentResponses = prev[questionText] || [];
-      return {
-        ...prev,
-        [questionText]: isChecked
-          ? [...currentResponses, label]
-          : currentResponses.filter((response) => response !== label)
-      };
-    });
+  const editQuestionInPreview = (index: number, updatedQuestion: Question) => {
+    setQuestionnaire((prev) => ({
+      ...prev,
+      questions: prev.questions.map((question, i) => (i === index ? updatedQuestion : question))
+    }));
   };
 
   /**
@@ -165,7 +152,7 @@ const NewQuestionnaireScreen = () => {
    */
   const saveQuestionnaire = async () => {
     setLoading(true);
-
+    console.log(questionnaire);
     try {
       const createdQuestionnaire = await questionnairesApi.createQuestionnaires({
         questionnaire: {
@@ -186,7 +173,6 @@ const NewQuestionnaireScreen = () => {
 
   return (
     <>
-      {/* Card containing functions to build new Questionnaire */}
       <Card
         sx={{
           p: 2,
@@ -222,7 +208,7 @@ const NewQuestionnaireScreen = () => {
             required
             sx={{ mt: 2, mb: 4 }}
           />
-          <NewQuestionnaireCard handleAddQuestion={handleAddQuestion} />
+          <NewQuestionCard handleAddQuestion={handleAddQuestion} />
           <Card
             sx={{
               p: 2,
@@ -287,62 +273,11 @@ const NewQuestionnaireScreen = () => {
           </Card>
         </CardContent>
       </Card>
-      {/* Card containing answerOptions preview */}
-      <Card
-        sx={{
-          p: 2,
-          mt: 2,
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-          height: "100"
-        }}
-      >
-        <CardContent>
-          <Typography variant="h4" gutterBottom>
-            {questionnaire.title}
-          </Typography>
-          <Typography variant="h5" align="left" sx={{ mt: 2 }}>
-            {questionnaire.description}
-          </Typography>
-          <Divider sx={{ marginY: 2 }} />
-
-          <Box sx={{}}>
-            <Box
-              ssx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}
-            >
-              {questionnaire.questions.map((question: Question, index) => (
-                <Box key={question.questionText} sx={{}}>
-                  <Typography>{question.questionText}</Typography>
-
-                  <Box>
-                    {question.answerOptions.map((option: AnswerOption) => (
-                      <FormControlLabel
-                        key={option.label}
-                        control={<Checkbox checked={option.isCorrect} />}
-                        label={option.label}
-                        sx={{ display: "block", marginLeft: 2 }}
-                      />
-                    ))}
-                    <Box>
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={() => removeQuestionFromPreview(index)}
-                      >
-                        <DeleteForeverIcon sx={{ color: "red", mr: 2 }} />
-                        {strings.newQuestionnaireScreen.removeFromPreview}
-                      </Button>
-                    </Box>
-                    <Divider sx={{ marginY: 2 }} />
-                  </Box>
-                </Box>
-              ))}
-            </Box>
-          </Box>
-        </CardContent>
-      </Card>
-      {/* Card containing back button */}
+      <QuestionnairePreview
+        questionnaire={questionnaire}
+        removeQuestionFromPreview={removeQuestionFromPreview}
+        editQuestionInPreview={editQuestionInPreview}
+      />
       <Card sx={{ mt: 2, mb: 2, width: "100%" }}>
         <Link
           to={adminMode ? "/admin/questionnaire" : "/questionnaire"}
@@ -358,4 +293,4 @@ const NewQuestionnaireScreen = () => {
   );
 };
 
-export default NewQuestionnaireScreen;
+export default NewQuestionnaireBuilder;

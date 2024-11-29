@@ -10,7 +10,6 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CloseIcon from "@mui/icons-material/Close";
 import PendingIcon from "@mui/icons-material/Pending";
 import { useState, useEffect } from "react";
 import type { Questionnaire } from "src/generated/homeLambdasClient";
@@ -20,7 +19,6 @@ import { DataGrid, type GridRowParams, type GridRenderCellParams } from "@mui/x-
 import { useLambdasApi } from "src/hooks/use-api";
 import { useAtomValue, useSetAtom } from "jotai";
 import { errorAtom } from "src/atoms/error";
-import QuestionnaireInteractionScreen from "src/components/questionnaire/questionnaire-interaction-screen";
 import { QuestionnairePreviewModes } from "src/types/index";
 import { useNavigate } from "react-router";
 import { usersAtom } from "src/atoms/user";
@@ -112,7 +110,7 @@ const QuestionnaireTable = () => {
   const handleRowClick = (params: GridRowParams) => {
     setSelectedQuestionnaire(params.row as Questionnaire);
     setMode(QuestionnairePreviewModes.FILL);
-    navigate(`/questionnaire/${params.row.id}/fill`);
+    navigate(`/questionnaire/${params.row.id}`);
   };
 
   /**
@@ -202,7 +200,7 @@ const QuestionnaireTable = () => {
 
   return (
     <>
-      <Paper style={{ minHeight: 200, maxHeight: "auto", width: "100%", overflow: "auto" }}>
+      <Paper style={{ minHeight: 500, maxHeight: "auto", width: "100%", overflow: "auto" }}>
         {loading && (
           <CircularProgress
             size={50}

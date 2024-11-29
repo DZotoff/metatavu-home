@@ -46,7 +46,7 @@ const QuestionnaireFillMode = ({ questionnaire, userResponses, handleCheckboxCha
                           <Radio
                             checked={selectedOptions.includes(option.label)}
                             onChange={(e) =>
-                              handleRadioChange(question.questionText, option.label, e.target.checked)
+                              handleRadioChange(question.questionText, option.label)
                             }
                           />
                         ) : (

@@ -2,16 +2,10 @@ import { KeyboardReturn } from "@mui/icons-material";
 import {
   Box,
   Button,
-  Card,
-  CardContent,
-  Checkbox,
-  CircularProgress,
-  Divider,
-  FormControlLabel,
-  Typography
+  CircularProgress
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import type { AnswerOption, Question, Questionnaire } from "src/generated/homeLambdasClient";
+import type { Questionnaire } from "src/generated/homeLambdasClient";
 import strings from "src/localization/strings";
 import type { QuestionnairePreviewModes } from "src/types";
 import QuestionnaireFillMode from "./questionnaires-fill-mode";
@@ -26,8 +20,6 @@ import { useNavigate } from "react-router-dom";
  */
 interface Props {
   mode: QuestionnairePreviewModes;
-  setMode?: (mode: QuestionnairePreviewModes) => void;
-  onBack?: () => void;
 }
 
 /**
@@ -38,15 +30,21 @@ interface UserResponses {
 }
 
 /**
- *  Screen for the user to interact with the questionnaire; fill, edit and preview
+ *  Manager page for user to interact with the questionnaire; fill and edit
  *
  * @param props component properties
  */
-const QuestionnaireInteractionScreen = ({ mode, setMode, onBack }: Props) => {
+const QuestionnaireManager = ({ mode }: Props) => {
   const { id } = useParams<{ id: string }>();
   const { questionnairesApi } = useLambdasApi();
   const setError = useSetAtom(errorAtom);
-  const [questionnaire, setQuestionnaire] = useState<Questionnaire>([]);
+  const [questionnaire, setQuestionnaire] = useState<Questionnaire>({
+    id: "",
+    title: "",
+    description: "",
+    questions: [],
+    passScore: 0
+  });
   const [loading, setLoading] = useState(true);
   const [userResponses, setUserResponses] = useState<UserResponses>({});
   const navigate = useNavigate();
@@ -117,7 +115,7 @@ const QuestionnaireInteractionScreen = ({ mode, setMode, onBack }: Props) => {
    */
   const handleSubmit = () => {
     let correctAnswersCount = 0;
-    questionnaire.questions.forEach((question) => {
+    questionnaire.questions?.forEach((question) => {
       const userAnswers = userResponses[question.questionText] || [];
       const correctAnswers = question.answerOptions
         .filter((option) => option.isCorrect)
@@ -130,10 +128,9 @@ const QuestionnaireInteractionScreen = ({ mode, setMode, onBack }: Props) => {
       }
     });
     navigate(-1);
-    console.log(`Correct answers: ${correctAnswersCount} / ${questionnaire.questions.length}`);
   };
 
-  // FIXME: "Saving the results is not implemented yet";
+  // FIXME: "Saving the results is not implemented yet: Save QuestionnaireId to Users KeyCloak + Save User ID tp Questionnaire.passedUsers";
 
   /**
    * Function to render the content of the card
@@ -198,4 +195,4 @@ const QuestionnaireInteractionScreen = ({ mode, setMode, onBack }: Props) => {
   );
 };
 
-export default QuestionnaireInteractionScreen;
+export default QuestionnaireManager;

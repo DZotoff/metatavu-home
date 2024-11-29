@@ -1,4 +1,4 @@
-import { Card, CircularProgress, Grid } from "@mui/material";
+import { Card, Grid } from "@mui/material";
 import { Typography, Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import UserRoleUtils from "src/utils/user-role-utils";
@@ -13,6 +13,7 @@ const QuestionnaireScreen = () => {
   const adminMode = UserRoleUtils.adminMode();
 
   return (
+    <>
     <Card
       sx={{
         p: 2,
@@ -32,15 +33,17 @@ const QuestionnaireScreen = () => {
         )}
       </Grid>
       <QuestionnaireTable />
-      <Card sx={{ mt: 2, width: "100%" }}>
+    </Card>
+    <Card sx={{ mt: 2, width: "100%" }}>
         <Link to={adminMode ? "/admin" : "/"} style={{ textDecoration: "none" }}>
           <Button variant="contained" sx={{ p: 2, width: "100%" }}>
             <KeyboardReturn sx={{ marginRight: "10px" }} />
             <Typography>{strings.questionnaireScreen.back}</Typography>
           </Button>
         </Link>
-      </Card>
     </Card>
+    </>
+    
   );
 };
 
