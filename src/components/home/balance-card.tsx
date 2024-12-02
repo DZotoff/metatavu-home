@@ -47,12 +47,18 @@ const BalanceCard = () => {
     setLoading(false);
   };
 
+  /**
+   * Fetch user's flextime data when users or userProfile changes.
+   */
   useEffect(() => {
     if (users.length > 0 && userProfile) {
       getUsersFlextimes();
     }
   }, [users, userProfile]);
 
+  /**
+   * Render user's flextime data.
+   */
   const renderUserFlextime = () => {
     return (
       <Box>
