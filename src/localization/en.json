@@ -273,7 +273,9 @@
     "cancel": "Cancel",
     "confirm": "Confirm Delete"
   },
-  "questionnaireInteractionScreen": {
+  "questionnaireManager": {
+    "passed": "You have passed the questionnaire with {0} correct answers out of {1}.",
+    "failed": "You have failed the questionnaire with {0} correct answers out of {1}.", 
     "goBack": "Go back",
     "submit": "Submit"
   }

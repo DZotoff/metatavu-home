@@ -273,7 +273,9 @@
     "cancel": "Peruuta",
     "confirm": "Vahvista poisto"
   },
-  "questionnaireInteractionScreen": {
+  "questionnaireManager": {
+    "passed": "Olet läpäissyt kyselyn, sait {0} / {1} oikein",
+    "failed": "Et läpäissyt kyselyä, sait {0} / {1} oikein",
     "goBack": "Takaisin",
     "submit": "Lähetä vastaukset"
   }

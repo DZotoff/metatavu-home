@@ -46,7 +46,6 @@ const QuestionnaireTable = () => {
   const userProfile = useAtomValue(userProfileAtom);
 
   const loggedInUser = users.find((user: User) => user.id === userProfile?.id);
-  console.log(loggedInUser);
 
   useEffect(() => {
     const fetchQuestionnaires = async () => {
@@ -130,8 +129,10 @@ const QuestionnaireTable = () => {
    * @param params
    */
   const renderStatusCell = (params: GridRenderCellParams) => {
-    const passedQuestionnaires = loggedInUser?.attributes?.passedQuestionnaires || [];
-    const userHasPassed = passedQuestionnaires.includes(params.row.id);
+    // const passedQuestionnaires = loggedInUser?.attributes?.passedQuestionnaires || [];
+    // const userHasPassed = passedQuestionnaires.includes(params.row.id);
+    const userHasPassed = params.row.passedUsers?.includes(loggedInUser?.id);
+
     return userHasPassed ? (
       <CheckCircleIcon sx={{ color: "green" }} />
     ) : (

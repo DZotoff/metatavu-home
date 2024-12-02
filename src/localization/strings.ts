@@ -363,7 +363,9 @@ export interface Localized extends LocalizedStringsMethods {
   /**
    * Translations related to Questionnaire Interaction Screen
    */
-  questionnaireInteractionScreen: {
+  questionnaireManager: {
+    passed: string;
+    failed: string;
     goBack: string;
     submit: string;
   };

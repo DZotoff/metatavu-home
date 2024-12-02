@@ -1,19 +1,18 @@
 import { KeyboardReturn } from "@mui/icons-material";
-import {
-  Box,
-  Button,
-  CircularProgress
-} from "@mui/material";
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import { useEffect, useState } from "react";
 import type { Questionnaire } from "src/generated/homeLambdasClient";
 import strings from "src/localization/strings";
 import type { QuestionnairePreviewModes } from "src/types";
 import QuestionnaireFillMode from "./questionnaires-fill-mode";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useParams } from "react-router";
 import { errorAtom } from "src/atoms/error";
 import { useLambdasApi } from "src/hooks/use-api";
 import { useNavigate } from "react-router-dom";
+import { usersAtom } from "src/atoms/user";
+import { userProfileAtom } from "src/atoms/auth";
+import type { User } from "src/generated/homeLambdasClient";
 
 /**
  * Component properties
@@ -47,8 +46,14 @@ const QuestionnaireManager = ({ mode }: Props) => {
   });
   const [loading, setLoading] = useState(true);
   const [userResponses, setUserResponses] = useState<UserResponses>({});
+  const [ifPassedMessage, setIfPassedMessage] = useState<string | null>(null);
+  const [passedDialogOpen, setPassedDialogOpen] = useState<boolean>(false);
+  const users = useAtomValue(usersAtom);
+  const userProfile = useAtomValue(userProfileAtom);
   const navigate = useNavigate();
-  
+
+  const loggedInUser = users.find((user: User) => user.id === userProfile?.id);
+
   useEffect(() => {
     const fetchQuestionnaire = async () => {
       setLoading(true);
@@ -63,7 +68,7 @@ const QuestionnaireManager = ({ mode }: Props) => {
     };
     fetchQuestionnaire();
   }, [id, questionnairesApi, setError]);
-  
+
   if (loading) {
     return (
       <CircularProgress
@@ -98,7 +103,7 @@ const QuestionnaireManager = ({ mode }: Props) => {
   };
 
   /**
-   * Function to handle the change of the answer option radio buttons 
+   * Function to handle the change of the answer option radio buttons
    *
    * @param questionText
    * @param answerLabel
@@ -113,7 +118,7 @@ const QuestionnaireManager = ({ mode }: Props) => {
   /**
    * Function to handle the submission of the questionnaire
    */
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     let correctAnswersCount = 0;
     questionnaire.questions?.forEach((question) => {
       const userAnswers = userResponses[question.questionText] || [];
@@ -127,10 +132,51 @@ const QuestionnaireManager = ({ mode }: Props) => {
         correctAnswersCount++;
       }
     });
-    navigate(-1);
+
+    const passed = correctAnswersCount >= questionnaire.passScore;
+
+    if (passed) {
+      try {
+        const passedQuestionnaire = await questionnairesApi.updateQuestionnaires({
+          id: questionnaire.id || "",
+          questionnaire: {
+            ...questionnaire,
+            passedUsers: [...(questionnaire.passedUsers || []), loggedInUser?.id || ""]
+          }
+        });
+        console.log(passedQuestionnaire);
+        setIfPassedMessage(
+          `${strings.formatString(
+            strings.questionnaireManager.passed,
+            correctAnswersCount,
+            questionnaire.passScore
+          )}`
+        );
+        setPassedDialogOpen(true);
+        return passedQuestionnaire;
+      } catch (error) {
+        setError(`${strings.error.questionnaireSaveFailed}, ${error}`);
+      }
+    } else {
+      setIfPassedMessage(
+        `${strings.formatString(
+          strings.questionnaireManager.failed,
+          correctAnswersCount,
+          questionnaire.passScore
+        )}`
+      );
+      setPassedDialogOpen(true);
+    }
   };
 
-  // FIXME: "Saving the results is not implemented yet: Save QuestionnaireId to Users KeyCloak + Save User ID tp Questionnaire.passedUsers";
+  /**
+   * Function to close the passed dialog
+   */
+  const closePassedDialog = () => {
+    setPassedDialogOpen(false);
+    setIfPassedMessage(null);
+    navigate(-1);
+  };
 
   /**
    * Function to render the content of the card
@@ -169,7 +215,7 @@ const QuestionnaireManager = ({ mode }: Props) => {
               onClick={() => navigate(-1)}
               startIcon={<KeyboardReturn />}
             >
-              {strings.questionnaireInteractionScreen.goBack}
+              {strings.questionnaireManager.goBack}
             </Button>
             <Button
               sx={{ alignItems: "center" }}
@@ -178,9 +224,27 @@ const QuestionnaireManager = ({ mode }: Props) => {
               color="success"
               onClick={handleSubmit}
             >
-              {strings.questionnaireInteractionScreen.submit}
+              {strings.questionnaireManager.submit}
             </Button>
           </Box>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const renderDialog = () => {
+    switch (mode) {
+      case "FILL":
+        return (
+          <Dialog open={passedDialogOpen} onClose={closePassedDialog}>
+            <DialogTitle>{ifPassedMessage}</DialogTitle>
+            <DialogActions>
+              <Button onClick={closePassedDialog} color="primary">
+                OK
+              </Button>
+            </DialogActions>
+          </Dialog>
         );
       default:
         return null;
@@ -191,6 +255,7 @@ const QuestionnaireManager = ({ mode }: Props) => {
     <>
       {renderCardContent()}
       {renderButtons()}
+      {renderDialog()}
     </>
   );
 };
