@@ -152,7 +152,6 @@ const NewQuestionnaireBuilder = () => {
    */
   const saveQuestionnaire = async () => {
     setLoading(true);
-    console.log(questionnaire);
     try {
       const createdQuestionnaire = await questionnairesApi.createQuestionnaires({
         questionnaire: {

@@ -56,11 +56,11 @@ const QuestionnaireManager = ({ mode }: Props) => {
 
   useEffect(() => {
     const fetchQuestionnaire = async () => {
+      if (!id) return;
       setLoading(true);
       try {
         const fetchedQuestionnaire = await questionnairesApi.getQuestionnairesById({ id });
         setQuestionnaire(fetchedQuestionnaire);
-        console.log(fetchedQuestionnaire);
       } catch (error) {
         setError(`${strings.error.questionnaireLoadFailed}, ${error}`);
       }
@@ -138,13 +138,12 @@ const QuestionnaireManager = ({ mode }: Props) => {
     if (passed) {
       try {
         const passedQuestionnaire = await questionnairesApi.updateQuestionnaires({
-          id: questionnaire.id || "",
+          id: questionnaire.id as string,
           questionnaire: {
             ...questionnaire,
-            passedUsers: [...(questionnaire.passedUsers || []), loggedInUser?.id || ""]
+            passedUsers: [...(questionnaire.passedUsers || []), loggedInUser?.id as string]
           }
         });
-        console.log(passedQuestionnaire);
         setIfPassedMessage(
           `${strings.formatString(
             strings.questionnaireManager.passed,
