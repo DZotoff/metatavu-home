@@ -272,5 +272,9 @@
     "confirmDeleteTitle": "Poista {0}?",
     "cancel": "Peruuta",
     "confirm": "Vahvista poisto"
+  },
+  "balanceCard": {
+    "totalFlextimeBalance": "Kokonaisbalanssi: ",
+    "monthFlextimeBalance": "Tämän kuukauden balanssi: "
   }
 }

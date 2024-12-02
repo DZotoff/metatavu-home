@@ -272,6 +272,9 @@
     "confirmDeleteTitle": "Delete {0}?",
     "cancel": "Cancel",
     "confirm": "Confirm Delete"
-
+  },
+  "balanceCard": {
+    "totalFlextimeBalance": "Total flextime balance: ",
+    "monthFlextimeBalance": "Month flextime balance: "
   }
 }

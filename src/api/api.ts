@@ -72,11 +72,6 @@ export const getLambdasApiClient = (accessToken?: string) => {
     config.lambdas.baseUrl,
     accessToken
   );
-  const getSeveraConfiguration = getConfigurationFactory(
-    LambdaConfiguration,
-    config.severa.baseUrl,
-    accessToken
-  );
 
   return {
     allocationsApi: new AllocationsApi(getConfiguration()),
@@ -86,6 +81,6 @@ export const getLambdasApiClient = (accessToken?: string) => {
     slackAvatarsApi: new SlackAvatarsApi(getConfiguration()),
     usersApi: new UsersApi(getConfiguration()),
     questionnairesApi: new QuestionnairesApi(getConfiguration()),
-    flexTimeApi: new FlexTimeApi(getSeveraConfiguration())
+    flexTimeApi: new FlexTimeApi(getConfiguration())
   };
 };

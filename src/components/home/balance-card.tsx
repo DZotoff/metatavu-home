@@ -1,4 +1,4 @@
-import { Grid, Typography, Card, CardContent, Skeleton } from "@mui/material";
+import { Grid, Typography, Card, CardContent, Skeleton, Box } from "@mui/material";
 import strings from "src/localization/strings";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import { errorAtom } from "src/atoms/error";
@@ -32,24 +32,15 @@ const BalanceCard = () => {
    */
   const getUsersFlextimes = async () => {
     setLoading(true);
-    const loggedInUser = users.find(
-      (users: User) =>
-        users.id === userProfile?.id
-    );
-    console.log("loggedInUser", loggedInUser);
+    const loggedInUser = users.find((users: User) => users.id === userProfile?.id);
     if (loggedInUser) {
       const severaUserId = getSeveraUserId(loggedInUser);
-      console.log("severaUserId", severaUserId);
       try {
-        console.log(flexTimeApi);
         const fetchedUsersFlextime = await flexTimeApi.getFlextimeBySeveraUserId({
           severaUserId
         });
-        console.log("fetchedUsersFlextime:", fetchedUsersFlextime);
         setUsersFlextimes([fetchedUsersFlextime]);
-        console.log("usersFlextimes:", usersFlextimes);
       } catch (error) {
-        console.log(error)
         setError(`${strings.error.fetchFailedGeneral}, ${error}`);
       }
     }
@@ -57,7 +48,6 @@ const BalanceCard = () => {
   };
 
   useEffect(() => {
-    console.log("users", users);
     if (users.length > 0 && userProfile) {
       getUsersFlextimes();
     }
@@ -65,10 +55,18 @@ const BalanceCard = () => {
 
   const renderUserFlextime = () => {
     return (
-      <Typography variant="body1">
-        " No data"
-        FIXME: Localization
-      </Typography>
+      <Box>
+        {usersFlextimes?.map((flextime) => (
+          <Box key={flextime.totalFlextimeBalance} sx={{ mb: 2 }}>
+            <Typography variant="body1">
+              {strings.balanceCard.totalFlextimeBalance} {flextime.totalFlextimeBalance} hours
+            </Typography>
+            <Typography variant="body1">
+              {strings.balanceCard.monthFlextimeBalance} {flextime.monthFlextimeBalance} hours
+            </Typography>
+          </Box>
+        ))}
+      </Box>
     );
   };
 
