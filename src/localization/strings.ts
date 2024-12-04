@@ -1,3 +1,4 @@
+import QuestionnairePreview from "src/components/questionnaire/questionnaire-preview";
 import en from "./en.json";
 import fi from "./fi.json";
 import LocalizedStrings, { type LocalizedStringsMethods } from "localized-strings";
@@ -315,9 +316,9 @@ export interface Localized extends LocalizedStringsMethods {
     back: string;
   };
   /**
-   * Translations related to New Questionnaire Screen
+   * Translations related to New Questionnaire Builder
    */
-  newQuestionnaireScreen: {
+  newQuestionnaireBuilder: {
     makeNewQuestionnaire: string;
     title: string;
     insertTitle: string;
@@ -368,6 +369,15 @@ export interface Localized extends LocalizedStringsMethods {
     failed: string;
     goBack: string;
     submit: string;
+  };
+  /**
+   * Translations related to Questionnaire Preview
+   */
+  questionnairePreview: {
+    save: string;
+    edit: string;
+    remove: string;
+    saveAlert: string;
   };
 }
 

@@ -171,7 +171,7 @@ export interface QuestionOption {
 /**
  * Enum describing questionnaire preview modes
  */
-export enum QuestionnairePreviewModes {
+export enum QuestionnairePreviewMode {
   FILL = "FILL",
   EDIT = "EDIT",
   PREVIEW = "PREVIEW"

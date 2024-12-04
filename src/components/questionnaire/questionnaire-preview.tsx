@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import type { Question } from "src/generated/homeLambdasClient";
+import strings from "src/localization/strings";
 
 /**
  * Component properties
@@ -40,11 +41,12 @@ const QuestionnairePreview = ({
 }: Props) => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editedQuestion, setEditedQuestion] = useState<Question | null>(null);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   /**
    * Fuction to handle the edit click, able to edit the question in preview
-   * 
-   * @param index 
+   *
+   * @param index number
    */
   const handleEditClick = (index: number) => {
     setEditingIndex(index);
@@ -52,9 +54,9 @@ const QuestionnairePreview = ({
   };
 
   /**
-   * Function to handle the question text change in the preview edit 
-   * 
-   * @param event 
+   * Function to handle the question text change in the preview edit
+   *
+   * @param event
    */
   const handleQuestionTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (editedQuestion) {
@@ -64,11 +66,14 @@ const QuestionnairePreview = ({
 
   /**
    * Function to handle the answer option change in the preview edit
-   * 
-   * @param index 
-   * @param event 
+   *
+   * @param index number
+   * @param event
    */
-  const handleAnswerOptionChange = (index: number, event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleAnswerOptionChange = (
+    index: number,
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     if (editedQuestion) {
       const updatedOptions = editedQuestion.answerOptions.map((option, i) =>
         i === index ? { ...option, label: event.target.value } : option
@@ -79,8 +84,8 @@ const QuestionnairePreview = ({
 
   /**
    * Function to handle the checkbox change in the preview edit
-   * 
-   * @param index 
+   *
+   * @param index number
    */
   const handleCheckboxChange = (index: number) => {
     if (editedQuestion) {
@@ -96,6 +101,14 @@ const QuestionnairePreview = ({
    */
   const handleSaveClick = () => {
     if (editedQuestion !== null && editingIndex !== null) {
+      const allCheckboxesEmpty = editedQuestion.answerOptions.every((option) => !option.isCorrect);
+      const isQuestionTextEmpty = !editedQuestion.questionText.trim();
+
+      if (allCheckboxesEmpty || isQuestionTextEmpty) {
+        alert(`${strings.questionnairePreview.saveAlert}`);
+        return;
+      }
+
       editQuestionInPreview(editingIndex, editedQuestion);
       setEditingIndex(null);
       setEditedQuestion(null);
@@ -152,9 +165,10 @@ const QuestionnairePreview = ({
                       variant="contained"
                       color="primary"
                       onClick={handleSaveClick}
+                      disabled={editedQuestion?.answerOptions === null}
                       sx={{ mt: 2 }}
                     >
-                      Save
+                      {strings.questionnairePreview.save}
                     </Button>
                   </>
                 ) : (
@@ -180,10 +194,10 @@ const QuestionnairePreview = ({
                   onClick={() => removeQuestionFromPreview(index)}
                 >
                   <DeleteForeverIcon sx={{ color: "red", mr: 2 }} />
-                  Remove from Preview
+                  {strings.questionnairePreview.remove}
                 </Button>
                 <Button variant="contained" color="primary" onClick={() => handleEditClick(index)}>
-                  Edit Question
+                  {strings.questionnairePreview.edit}
                 </Button>
               </Box>
             </Box>

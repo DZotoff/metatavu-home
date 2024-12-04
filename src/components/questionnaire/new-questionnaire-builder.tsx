@@ -9,7 +9,7 @@ import {
   TextField,
   Tooltip,
   Typography
-} from "@mui/material"
+} from "@mui/material";
 import { useState, type ChangeEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import NewQuestionCard from "./new-question-card";
@@ -23,7 +23,7 @@ import { errorAtom } from "src/atoms/error";
 import QuestionnairePreview from "./questionnaire-preview";
 
 /**
- * New Questionnaire component
+ * New Questionnaire Builder component
  */
 const NewQuestionnaireBuilder = () => {
   const adminMode = UserRoleUtils.adminMode();
@@ -70,7 +70,7 @@ const NewQuestionnaireBuilder = () => {
    * Functions to add new question to Questionnaire that is being built
    *
    * @param questionText string
-   * @param list of QuestionOptions
+   * @param answerOptions object
    */
   const handleAddQuestion = ({
     questionText,
@@ -97,8 +97,8 @@ const NewQuestionnaireBuilder = () => {
   /**
    * Function to edit question in the questionnaire that is being built
    *
-   * @param index
-   * @param updatedQuestion
+   * @param index number
+   * @param updatedQuestion object
    */
   const editQuestionInPreview = (index: number, updatedQuestion: Question) => {
     setQuestionnaire((prev) => ({
@@ -136,13 +136,13 @@ const NewQuestionnaireBuilder = () => {
     const isDescriptionEmpty = !questionnaire.description.trim();
 
     if (isTitleEmpty && isDescriptionEmpty) {
-      return strings.newQuestionnaireScreen.tooltipBothEmpty;
+      return strings.newQuestionnaireBuilder.tooltipBothEmpty;
     }
     if (isTitleEmpty) {
-      return strings.newQuestionnaireScreen.tooltipEmptyTitle;
+      return strings.newQuestionnaireBuilder.tooltipEmptyTitle;
     }
     if (isDescriptionEmpty) {
-      return strings.newQuestionnaireScreen.tooltipEmptyDescription;
+      return strings.newQuestionnaireBuilder.tooltipEmptyDescription;
     }
     return "";
   };
@@ -183,12 +183,12 @@ const NewQuestionnaireBuilder = () => {
       >
         <CardContent sx={{ p: 2 }}>
           <Typography variant="h4" gutterBottom>
-            {strings.newQuestionnaireScreen.makeNewQuestionnaire}
+            {strings.newQuestionnaireBuilder.makeNewQuestionnaire}
           </Typography>
           <TextField
             name="title"
-            label={strings.newQuestionnaireScreen.title}
-            placeholder={strings.newQuestionnaireScreen.insertTitle}
+            label={strings.newQuestionnaireBuilder.title}
+            placeholder={strings.newQuestionnaireBuilder.insertTitle}
             value={questionnaire.title}
             onChange={handleQuestionnaireInputChange}
             variant="outlined"
@@ -198,8 +198,8 @@ const NewQuestionnaireBuilder = () => {
           />
           <TextField
             name="description"
-            label={strings.newQuestionnaireScreen.description}
-            placeholder={strings.newQuestionnaireScreen.insertDescription}
+            label={strings.newQuestionnaireBuilder.description}
+            placeholder={strings.newQuestionnaireBuilder.insertDescription}
             value={questionnaire.description}
             onChange={handleQuestionnaireInputChange}
             variant="outlined"
@@ -233,10 +233,10 @@ const NewQuestionnaireBuilder = () => {
                   gutterBottom
                   sx={{ display: "flex", alignItems: "center", mb: 1, mt: 1 }}
                 >
-                  {strings.newQuestionnaireScreen.countedAnswers} {countCorrectAnswers()}
+                  {strings.newQuestionnaireBuilder.countedAnswers} {countCorrectAnswers()}
                 </Typography>
                 <Typography variant="h6" gutterBottom sx={{ mb: 1, mt: 1 }}>
-                  {strings.newQuestionnaireScreen.requiredAnswers} {questionnaire.passScore}
+                  {strings.newQuestionnaireBuilder.requiredAnswers} {questionnaire.passScore}
                 </Typography>
                 <Slider
                   value={questionnaire.passScore}
@@ -263,7 +263,7 @@ const NewQuestionnaireBuilder = () => {
                     {loading ? (
                       <CircularProgress size={24} color="inherit" />
                     ) : (
-                      strings.newQuestionnaireScreen.saveButton
+                      strings.newQuestionnaireBuilder.saveButton
                     )}
                   </Button>
                 </span>
@@ -284,7 +284,7 @@ const NewQuestionnaireBuilder = () => {
         >
           <Button variant="contained" sx={{ p: 2, width: "100%" }}>
             <KeyboardReturn sx={{ marginRight: "10px" }} />
-            <Typography>{strings.newQuestionnaireScreen.back}</Typography>
+            <Typography>{strings.newQuestionnaireBuilder.back}</Typography>
           </Button>
         </Link>
       </Card>

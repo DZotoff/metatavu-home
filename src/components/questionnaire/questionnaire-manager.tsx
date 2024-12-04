@@ -3,7 +3,7 @@ import { Box, Button, CircularProgress, Dialog, DialogActions, DialogTitle } fro
 import { useEffect, useState } from "react";
 import type { Questionnaire } from "src/generated/homeLambdasClient";
 import strings from "src/localization/strings";
-import type { QuestionnairePreviewModes } from "src/types";
+import type { QuestionnairePreviewMode } from "src/types";
 import QuestionnaireFillMode from "./questionnaires-fill-mode";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useParams } from "react-router";
@@ -18,7 +18,7 @@ import type { User } from "src/generated/homeLambdasClient";
  * Component properties
  */
 interface Props {
-  mode: QuestionnairePreviewModes;
+  mode: QuestionnairePreviewMode;
 }
 
 /**
@@ -34,7 +34,7 @@ interface UserResponses {
  * @param props component properties
  */
 const QuestionnaireManager = ({ mode }: Props) => {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
   const { questionnairesApi } = useLambdasApi();
   const setError = useSetAtom(errorAtom);
   const [questionnaire, setQuestionnaire] = useState<Questionnaire>({
@@ -46,8 +46,8 @@ const QuestionnaireManager = ({ mode }: Props) => {
   });
   const [loading, setLoading] = useState(true);
   const [userResponses, setUserResponses] = useState<UserResponses>({});
-  const [ifPassedMessage, setIfPassedMessage] = useState<string | null>(null);
-  const [passedDialogOpen, setPassedDialogOpen] = useState<boolean>(false);
+  const [questionnaireFeedbackMessage, setQuestionnaireFeedbackMessage] = useState<string | null>(null);
+  const [questionnaireFeedbackDialogOpen, setQuestionnaireFeedbackDialogOpen] = useState(true);
   const users = useAtomValue(usersAtom);
   const userProfile = useAtomValue(userProfileAtom);
   const navigate = useNavigate();
@@ -86,9 +86,9 @@ const QuestionnaireManager = ({ mode }: Props) => {
   /**
    * Function to handle the change of the answer option checkboxes
    *
-   * @param questionText
-   * @param answerLabel
-   * @param isSelected
+   * @param questionText string
+   * @param answerLabel string
+   * @param isSelected boolean
    */
   const handleCheckboxChange = (questionText: string, answerLabel: string, isSelected: boolean) => {
     setUserResponses((prevResponses) => {
@@ -105,8 +105,8 @@ const QuestionnaireManager = ({ mode }: Props) => {
   /**
    * Function to handle the change of the answer option radio buttons
    *
-   * @param questionText
-   * @param answerLabel
+   * @param questionText string
+   * @param answerLabel string
    */
   const handleRadioChange = (questionText: string, answerLabel: string) => {
     setUserResponses((prevResponses) => ({
@@ -116,7 +116,9 @@ const QuestionnaireManager = ({ mode }: Props) => {
   };
 
   /**
-   * Function to handle the submission of the questionnaire
+   * Function to handle the submission of the questionnaire and calculate if the user has passed it
+   * Save users Id to the passedUsers array in the questionnaire
+   * Determine message based on the result
    */
   const handleSubmit = async () => {
     let correctAnswersCount = 0;
@@ -125,10 +127,7 @@ const QuestionnaireManager = ({ mode }: Props) => {
       const correctAnswers = question.answerOptions
         .filter((option) => option.isCorrect)
         .map((option) => option.label);
-      if (
-        userAnswers.length === correctAnswers.length &&
-        userAnswers.every((answer) => correctAnswers.includes(answer))
-      ) {
+      if (userAnswers.every((answer) => correctAnswers.includes(answer))) {
         correctAnswersCount++;
       }
     });
@@ -144,41 +143,43 @@ const QuestionnaireManager = ({ mode }: Props) => {
             passedUsers: [...(questionnaire.passedUsers || []), loggedInUser?.id as string]
           }
         });
-        setIfPassedMessage(
+      setQuestionnaireFeedbackMessage(
           `${strings.formatString(
             strings.questionnaireManager.passed,
             correctAnswersCount,
             questionnaire.passScore
           )}`
         );
-        setPassedDialogOpen(true);
+        setQuestionnaireFeedbackDialogOpen(true);
         return passedQuestionnaire;
       } catch (error) {
         setError(`${strings.error.questionnaireSaveFailed}, ${error}`);
       }
     } else {
-      setIfPassedMessage(
+    setQuestionnaireFeedbackMessage(
         `${strings.formatString(
           strings.questionnaireManager.failed,
           correctAnswersCount,
           questionnaire.passScore
         )}`
       );
-      setPassedDialogOpen(true);
+      setQuestionnaireFeedbackDialogOpen(true);
     }
   };
 
   /**
-   * Function to close the passed dialog
+   * Function to close the dialog
    */
-  const closePassedDialog = () => {
-    setPassedDialogOpen(false);
-    setIfPassedMessage(null);
+  const closeQuestionnaireFeedbackDialog = () => {
+    setQuestionnaireFeedbackDialogOpen(false);
+    setQuestionnaireFeedbackMessage(null);
     navigate(-1);
   };
 
   /**
-   * Function to render the content of the card
+   * Function to render the content of the card according to the mode
+   * 
+   * @returns 
    */
   const renderCardContent = () => {
     switch (mode) {
@@ -196,6 +197,11 @@ const QuestionnaireManager = ({ mode }: Props) => {
     }
   };
 
+  /**
+   * Render the buttons based on the mode
+   * 
+   * @returns
+   */
   const renderButtons = () => {
     switch (mode) {
       case "FILL":
@@ -232,15 +238,20 @@ const QuestionnaireManager = ({ mode }: Props) => {
     }
   };
 
+  /**
+   * Render the dialog based on the mode
+   * 
+   * @returns
+   */
   const renderDialog = () => {
     switch (mode) {
       case "FILL":
         return (
-          <Dialog open={passedDialogOpen} onClose={closePassedDialog}>
-            <DialogTitle>{ifPassedMessage}</DialogTitle>
+          <Dialog open={questionnaireFeedbackDialogOpen} onClose={closeQuestionnaireFeedbackDialog}>
+            <DialogTitle>{questionnaireFeedbackMessage}</DialogTitle>
             <DialogActions>
-              <Button onClick={closePassedDialog} color="primary">
-                OK
+              <Button onClick={closeQuestionnaireFeedbackDialog} color="primary">
+                {strings.questionnaireManager.goBack}
               </Button>
             </DialogActions>
           </Dialog>

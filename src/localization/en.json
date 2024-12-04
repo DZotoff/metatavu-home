@@ -236,7 +236,7 @@
     "delete": "Delete", 
     "back": "Back"
   },
-  "newQuestionnaireScreen": {
+  "newQuestionnaireBuilder": {
     "makeNewQuestionnaire": "Make a New Questionnaire",
     "title": "Title",
     "insertTitle": "Insert title",
@@ -278,5 +278,11 @@
     "failed": "You have failed the questionnaire with {0} correct answers out of {1}.", 
     "goBack": "Go back",
     "submit": "Submit"
+  },
+  "questionnairePreview": {
+    "save": "Save changes",
+    "edit": "Edit question",
+    "remove": "Remove from preview",
+    "saveAlert": "All checkboxes or question text are empty"
   }
 }

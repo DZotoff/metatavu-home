@@ -21,7 +21,7 @@ import SprintViewScreen from "./components/screens/sprint-view-screen";
 import QuestionnaireScreen from "./components/screens/questionnaire-screen";
 import NewQuestionnaireBuilder from "./components/questionnaire/new-questionnaire-builder";
 import QuestionnaireManager from "./components/questionnaire/questionnaire-manager";
-import { QuestionnairePreviewModes } from "./types";
+import { QuestionnairePreviewMode } from "./types";
 
 /**
  * Application component
@@ -61,7 +61,7 @@ const App = () => {
         },
         {
           path: "/questionnaire/:id",
-          element: <QuestionnaireManager mode={QuestionnairePreviewModes.FILL} />
+          element: <QuestionnaireManager mode={QuestionnairePreviewMode.FILL} />
         }
       ]
     },
@@ -100,7 +100,7 @@ const App = () => {
         },
         {
           path: "/admin/questionnaire/:id/edit",
-          element: <QuestionnaireManager mode={QuestionnairePreviewModes.EDIT} />
+          element: <QuestionnaireManager mode={QuestionnairePreviewMode.EDIT} />
         }
       ]
     }

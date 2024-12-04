@@ -19,7 +19,7 @@ import { DataGrid, type GridRowParams, type GridRenderCellParams } from "@mui/x-
 import { useLambdasApi } from "src/hooks/use-api";
 import { useAtomValue, useSetAtom } from "jotai";
 import { errorAtom } from "src/atoms/error";
-import { QuestionnairePreviewModes } from "src/types/index";
+import { QuestionnairePreviewMode } from "src/types/index";
 import { useNavigate } from "react-router";
 import { usersAtom } from "src/atoms/user";
 import { userProfileAtom } from "src/atoms/auth";
@@ -33,7 +33,7 @@ import type { User } from "src/generated/homeLambdasClient";
 const QuestionnaireTable = () => {
   const adminMode = UserRoleUtils.adminMode();
   const navigate = useNavigate();
-  const [, setMode] = useState<QuestionnairePreviewModes>(QuestionnairePreviewModes.FILL);
+  const [, setMode] = useState<QuestionnairePreviewMode>(QuestionnairePreviewMode.FILL);
   const { questionnairesApi } = useLambdasApi();
   const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([]);
   const [loading, setLoading] = useState(false);
@@ -107,18 +107,18 @@ const QuestionnaireTable = () => {
    */
   const handleRowClick = (params: GridRowParams) => {
     setSelectedQuestionnaire(params.row as Questionnaire);
-    setMode(QuestionnairePreviewModes.FILL);
+    setMode(QuestionnairePreviewMode.FILL);
     navigate(`/questionnaire/${params.row.id}`);
   };
 
   /**
    * Function to handle open editor for Questionnaire
    *
-   * @param questionnaire
+   * @param questionnaire - Questionnaire to edit
    */
   const handleEditClick = (questionnaire: Questionnaire) => {
     setSelectedQuestionnaire(questionnaire);
-    setMode(QuestionnairePreviewModes.EDIT);
+    setMode(QuestionnairePreviewMode.EDIT);
     navigate(`${questionnaire.id}/edit`);
   };
 

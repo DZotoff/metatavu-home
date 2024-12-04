@@ -10,6 +10,9 @@ import {
 } from "@mui/material";
 import type { AnswerOption, Question, Questionnaire } from "src/generated/homeLambdasClient";
 
+/**
+ * Component props
+ */
 interface Props {
   questionnaire: Questionnaire;
   userResponses: Record<string, string[]>;
@@ -17,9 +20,26 @@ interface Props {
   handleRadioChange: (questionText: string, answerLabel: string) => void;
 }
 
-const QuestionnaireFillMode = ({ questionnaire, userResponses, handleCheckboxChange, handleRadioChange }: Props) => {
+/**
+ * Fill mode for the questionnaire
+ *
+ * @param props
+ * @returns Questionnaire that can be filled
+ */
+const QuestionnaireFillMode = ({
+  questionnaire,
+  userResponses,
+  handleCheckboxChange,
+  handleRadioChange
+}: Props) => {
+  /**
+   * Function to count the correct answers in the question, so that we can determine how question is rendered
+   *
+   * @param question
+   * @returns number of correct answers in the question
+   */
   const getCorrectAnswerCount = (question: Question) => {
-    return question.answerOptions.filter(option => option.isCorrect).length;
+    return question.answerOptions.filter((option) => option.isCorrect).length;
   };
 
   return (
@@ -45,15 +65,17 @@ const QuestionnaireFillMode = ({ questionnaire, userResponses, handleCheckboxCha
                         correctAnswerCount === 1 ? (
                           <Radio
                             checked={selectedOptions.includes(option.label)}
-                            onChange={() =>
-                              handleRadioChange(question.questionText, option.label)
-                            }
+                            onChange={() => handleRadioChange(question.questionText, option.label)}
                           />
                         ) : (
                           <Checkbox
                             checked={selectedOptions.includes(option.label)}
                             onChange={(e) =>
-                              handleCheckboxChange(question.questionText, option.label, e.target.checked)
+                              handleCheckboxChange(
+                                question.questionText,
+                                option.label,
+                                e.target.checked
+                              )
                             }
                             disabled={!selectedOptions.includes(option.label) && maxSelected}
                           />

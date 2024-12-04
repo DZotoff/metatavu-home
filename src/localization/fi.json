@@ -236,7 +236,7 @@
     "delete": "Poista",
     "back": "Takaisin"
   },
-  "newQuestionnaireScreen": {
+  "newQuestionnaireBuilder": {
     "makeNewQuestionnaire" : "Tee uusi kysely",
     "title": "Otsikko",
     "insertTitle": "Syötä otsikko",
@@ -278,5 +278,11 @@
     "failed": "Et läpäissyt kyselyä, sait {0} / {1} oikein",
     "goBack": "Takaisin",
     "submit": "Lähetä vastaukset"
+  },
+  "questionnairePreview": {
+    "save": "Tallenna muutokset",
+    "edit": "Muokkaa kysymystä",
+    "remove": "Poista kysymys",
+    "saveAlert": "Kysymysteksti tai vastausvaihtoehdot ovat tyhjiä"
   }
 }
