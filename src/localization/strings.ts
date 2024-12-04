@@ -49,6 +49,7 @@ export interface Localized extends LocalizedStringsMethods {
     questionnaireSaveFailed: string;
     questionnaireLoadFailed: string;
     questionnaireDeleteFailed: string;
+    fetchFailedFlextime: string;
   };
   /**
    * Translations related to localization
@@ -365,7 +366,10 @@ export interface Localized extends LocalizedStringsMethods {
    */
   balanceCard: {
     totalFlextimeBalance: string;
-    monthFlextimeBalance: string;
+    employeeBalances: string;
+    viewAllTimeEntries: string;
+    balance: string;
+    atTheEndOf: string;
   };
 }
 

@@ -32,7 +32,8 @@
     "fetchSlackAvatarsFailed": "Virhe Slack-avatareita pyydettäessä",
     "questionnaireSaveFailed": "Kyselylomakkeen tallentaminen epäonnistui",
     "questionnaireLoadFailed": "Kyselylomakkeiden lataaminen epäonnistui",
-    "questionnaireDeleteFailed": "Kyselylomakkeen poistaminen epäonnistui"
+    "questionnaireDeleteFailed": "Kyselylomakkeen poistaminen epäonnistui",
+    "fetchFailedFlextime": "Joustotyöaikatietojen hakeminen epäonnistui"
   },
   "localization": {
     "en": "EN",
@@ -274,7 +275,10 @@
     "confirm": "Vahvista poisto"
   },
   "balanceCard": {
-    "totalFlextimeBalance": "Kokonaisbalanssi: ",
-    "monthFlextimeBalance": "Tämän kuukauden balanssi: "
+    "totalFlextimeBalance": "Kokonaisbalanssi: {0} tuntia",
+    "employeeBalances": "Henkilöstön aikakirjaukset ja saldot",
+    "viewAllTimeEntries": "Kaikki henkilöstön aikakirjaukset ja saldot",
+    "balance": "Saldo",
+    "atTheEndOf": "{0} lopussa"
   }
 }

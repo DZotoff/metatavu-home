@@ -32,7 +32,8 @@
     "fetchSlackAvatarsFailed": "Error while fetching Slack avatars",
     "questionnaireLoadFailed": "Error while loading questionnaires",
     "questionnaireDeleteFailed": "Error while deleting questionnaire",
-    "questionnaireSaveFailed": "Error while saving questionnaire"
+    "questionnaireSaveFailed": "Error while saving questionnaire",
+    "fetchFailedFlextime": "Error while fetching flextime data"
   },
   "localization": {
     "en": "EN",
@@ -274,7 +275,10 @@
     "confirm": "Confirm Delete"
   },
   "balanceCard": {
-    "totalFlextimeBalance": "Total flextime balance: ",
-    "monthFlextimeBalance": "Month flextime balance: "
+    "totalFlextimeBalance": "Total flextime balance: {0} hours",
+    "employeeBalances": "Employee time totals and balances",
+    "viewAllTimeEntries": "View all employees time totals and balances",
+    "balance": "Balance",
+    "atTheEndOf": "At the end of {0}"
   }
 }

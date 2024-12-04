@@ -18,12 +18,12 @@ import { getSeveraUserId } from "src/utils/user-utils";
  * Component for displaying user's balance
  */
 const BalanceCard = () => {
-  const users = useAtomValue(usersAtom);
+  const user = useAtomValue(usersAtom);
   const userProfile = useAtomValue(userProfileAtom);
   const setError = useSetAtom(errorAtom);
   const [loading, setLoading] = useState(false);
   const adminMode = UserRoleUtils.adminMode();
-  const [usersFlextimes, setUsersFlextimes] = useState<Flextime[]>();
+  const [usersFlextime, setUsersFlextime] = useState<Flextime>();
   const yesterday = DateTime.now().minus({ days: 1 });
   const { flexTimeApi } = useLambdasApi();
 
@@ -32,16 +32,16 @@ const BalanceCard = () => {
    */
   const getUsersFlextimes = async () => {
     setLoading(true);
-    const loggedInUser = users.find((users: User) => users.id === userProfile?.id);
+    const loggedInUser = user.find((user: User) => user.id === userProfile?.id);
     if (loggedInUser) {
       const severaUserId = getSeveraUserId(loggedInUser);
       try {
         const fetchedUsersFlextime = await flexTimeApi.getFlextimeBySeveraUserId({
           severaUserId
         });
-        setUsersFlextimes([fetchedUsersFlextime]);
+        setUsersFlextime(fetchedUsersFlextime);
       } catch (error) {
-        setError(`${strings.error.fetchFailedGeneral}, ${error}`);
+        setError(`${strings.error.fetchFailedFlextime}, ${error}`);
       }
     }
     setLoading(false);
@@ -51,28 +51,22 @@ const BalanceCard = () => {
    * Fetch user's flextime data when users or userProfile changes.
    */
   useEffect(() => {
-    if (users.length > 0 && userProfile) {
+    if (!usersFlextime) {
       getUsersFlextimes();
     }
-  }, [users, userProfile]);
+  }, [user]);
 
   /**
    * Render user's flextime data.
    */
   const renderUserFlextime = () => {
     return (
-      <Box>
-        {usersFlextimes?.map((flextime) => (
-          <Box key={flextime.totalFlextimeBalance} sx={{ mb: 2 }}>
-            <Typography variant="body1">
-              {strings.balanceCard.totalFlextimeBalance} {flextime.totalFlextimeBalance} hours
-            </Typography>
-            <Typography variant="body1">
-              {strings.balanceCard.monthFlextimeBalance} {flextime.monthFlextimeBalance} hours
-            </Typography>
-          </Box>
-        ))}
-      </Box>
+      <Typography variant="body1">
+        {strings.formatString(
+          strings.balanceCard.totalFlextimeBalance,
+          usersFlextime?.totalFlextimeBalance ?? ""
+        )}
+      </Typography>
     );
   };
 
@@ -91,18 +85,18 @@ const BalanceCard = () => {
         {adminMode ? (
           <CardContent>
             <Typography variant="h6" fontWeight={"bold"} style={{ marginTop: 6, marginBottom: 3 }}>
-              {strings.timebank.employeeBalances}
+              {strings.balanceCard.employeeBalances}
             </Typography>
-            <Typography variant="body1">{strings.timebank.viewAllTimeEntries}</Typography>
+            <Typography variant="body1">{strings.balanceCard.viewAllTimeEntries}</Typography>
           </CardContent>
         ) : (
           <CardContent>
             <Typography variant="h6" fontWeight={"bold"} style={{ marginTop: 6, marginBottom: 3 }}>
-              {strings.timebank.balance}
+              {strings.balanceCard.balance}
             </Typography>
             <Grid container>
               <Grid item xs={12}>
-                {strings.formatString(strings.timebank.atTheEndOf, yesterday.toLocaleString())}
+                {strings.formatString(strings.balanceCard.atTheEndOf, yesterday.toLocaleString())}
               </Grid>
               <Grid style={{ marginBottom: 1 }} item xs={1}>
                 <ScheduleIcon style={{ marginTop: 1 }} />
