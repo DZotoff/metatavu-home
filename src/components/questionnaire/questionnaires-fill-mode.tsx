@@ -24,7 +24,7 @@ interface Props {
  * Fill mode for the questionnaire
  *
  * @param props
- * @returns Questionnaire that can be filled
+ * @returns questionnaire fill mode component
  */
 const QuestionnaireFillMode = ({
   questionnaire,

@@ -44,10 +44,10 @@ const QuestionnaireManager = ({ mode }: Props) => {
     questions: [],
     passScore: 0
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [userResponses, setUserResponses] = useState<UserResponses>({});
   const [questionnaireFeedbackMessage, setQuestionnaireFeedbackMessage] = useState<string | null>(null);
-  const [questionnaireFeedbackDialogOpen, setQuestionnaireFeedbackDialogOpen] = useState(true);
+  const [questionnaireFeedbackDialogOpen, setQuestionnaireFeedbackDialogOpen] = useState(false);
   const users = useAtomValue(usersAtom);
   const userProfile = useAtomValue(userProfileAtom);
   const navigate = useNavigate();
