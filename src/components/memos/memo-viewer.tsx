@@ -93,6 +93,33 @@ export const PdfViewer = ({ fileId }: { fileId: string }) => {
     }
   };
 
+  let pdfContent = null;
+  if (loading || isTranslating) {
+    pdfContent = (
+      <Box sx={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "rgba(255, 255, 255, 0.7)",
+      }}>
+        <CircularProgress />
+      </Box>
+    );
+  } else if (pdfBlobUrl) {
+    pdfContent = <PdfObject pdfBlobUrl={pdfBlobUrl} />;
+  } else {
+    pdfContent = (
+      <Typography variant="body1" color="error">
+        {strings.memoScreen.failedToLoadPdf}
+      </Typography>
+    );
+  }
+
   return (
     <Card sx={{ 
       p: 2, 
@@ -106,7 +133,11 @@ export const PdfViewer = ({ fileId }: { fileId: string }) => {
         gap={1}
         mb={2}
       >
-        <Box display="flex" alignItems="center" gap={0.5}>
+        <Box 
+          display="flex" 
+          alignItems="center" 
+          gap={0.5}
+        >
           <PictureAsPdfSharp />
           <Button 
             variant="text" 
@@ -118,7 +149,11 @@ export const PdfViewer = ({ fileId }: { fileId: string }) => {
           </Button>
         </Box>
         
-        <Box display="flex" alignItems="center" gap={0.5}>
+        <Box 
+          display="flex" 
+          alignItems="center" 
+          gap={0.5}
+        >
           <GTranslateSharp />
           <Button onClick={handleTranslatedPdf} disabled={!fileId || isTranslating}>
             {translated ? strings.memoScreen.originalPdf : strings.memoScreen.translatePdf}
@@ -132,31 +167,7 @@ export const PdfViewer = ({ fileId }: { fileId: string }) => {
           </Button>
         </Box>
       </Box>
-      {(loading || isTranslating) ? (
-        <Box sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "rgba(255, 255, 255, 0.7)",
-        }}
-        >
-          <CircularProgress />
-        </Box>
-      ) : (
-        pdfBlobUrl ? 
-          <PdfObject pdfBlobUrl={pdfBlobUrl} /> 
-        : 
-          <Typography variant="body1" color="error">
-            {strings.memoScreen.failedToLoadPdf}
-          </Typography>
-        )
-      }
-
+      {pdfContent}
       {isDialogOpen && (
         <Box sx={{
           position: "absolute",

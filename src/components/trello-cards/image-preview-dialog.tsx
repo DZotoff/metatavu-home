@@ -1,10 +1,7 @@
 import { 
-  Box, 
-  Button, 
-  Dialog, 
-  DialogActions, 
-  DialogContent, 
-  Typography 
+  Box,
+  Dialog,
+  DialogContent
 } from "@mui/material";
 import strings from "src/localization/strings";
 
@@ -45,10 +42,10 @@ const ImagePreviewDialog = ({
             minHeight: "400px",
           }}
         >
-          {selectedImage ? (
+          {selectedImage && (
             <img
               src={selectedImage}
-              alt="Full Size"
+              alt={strings.cardRequestError.noImage}
               style={{
                 width: "100%",
                 height: "auto",
@@ -56,16 +53,9 @@ const ImagePreviewDialog = ({
                 marginTop: "16px",
               }}
             />
-          ) : (
-            <Typography>{strings.cardRequestError.noImage}</Typography>
           )}
         </Box>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} color="primary">
-          {strings.cardScreen.close}
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 };

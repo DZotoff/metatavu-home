@@ -114,8 +114,8 @@ const CardItem = ({
               }
               return sum;
             }, [])
-              .map((text: any, index: any) => (
-                <div key={index}>{text}</div>
+              .map((text: any, memberId: any) => (
+                <div key={memberId}>{text}</div>
               )) || <div>{strings.cardRequestError.noComments}</div>}
           </Box>
           : ""

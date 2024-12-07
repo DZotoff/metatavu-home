@@ -47,6 +47,19 @@ const CardDialog = ({
   onCreateComment,
   onImageClick,
 }: CardDialogProps ) => {
+
+  /**
+   * Handles the keydown event for an image element
+   * 
+   * @param event event
+   * @param src source URL of the image
+   */
+  const handleImageKey = (event: React.KeyboardEvent<HTMLImageElement>, src: string) => {
+    if (event.key === "Enter" || event.key === " ") {
+      onImageClick(src);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>{selectedCard?.title || "" }</DialogTitle>
@@ -62,7 +75,9 @@ const CardDialog = ({
                   cursor: "pointer",
                 }}
                 alt={props.alt || "Image"}
+                src={props.src || ""}
                 onClick={() => onImageClick(props.src || "")}
+                onKeyDown={(event) => handleImageKey(event, props.src || "")}
               />
             ),
           }}
@@ -71,8 +86,12 @@ const CardDialog = ({
         </ReactMarkdown>
         <Box>
           <Typography variant="subtitle1">{strings.cardScreen.comments}</Typography>
-          {selectedCard?.comments?.map((comment: any, index: number) => (
-            <Typography key={index} variant="body2" sx={{ pl: 2 }}>
+          {selectedCard?.comments?.map((comment: any, memberId: any) => (
+            <Typography 
+              key={memberId} 
+              variant="body2" 
+              sx={{ pl: 2 }}
+            >
               - {comment.text || `${strings.cardRequestError.noText}`} (
               {members.find((member) => member.memberId === comment.createdBy)?.fullName ||
                 `${strings.cardRequestError.unknownAuthor}`} -{" "}

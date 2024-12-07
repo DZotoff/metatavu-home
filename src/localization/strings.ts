@@ -351,7 +351,7 @@ export interface Localized extends LocalizedStringsMethods {
    */
   memoScreen: {
     selectFile: string;
-    selectYear: String;
+    selectYear: string;
     selectPdf: string;
     download: string,
     translatePdf: string,
