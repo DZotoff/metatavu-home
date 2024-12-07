@@ -29,6 +29,7 @@ export const PdfViewer = ({ fileId }: { fileId: string }) => {
   const [translated, setTranslated] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [summaryText, setSummaryText] = useState<string>();
+  const [summaryLoading, setSummaryLoading] = useState(false);
   const [language] = useAtom(languageAtom);
   const { memoApi } = useLambdasApi();
   const setError = useSetAtom(errorAtom);
@@ -83,6 +84,7 @@ export const PdfViewer = ({ fileId }: { fileId: string }) => {
    * Fetches summary for a memo
    */
   const handleSummary = async () => {
+    setSummaryLoading(true);
     try {
       setIsDialogOpen(true);
       const summary = await memoApi.getSummaryMemo({ fileId });
@@ -91,6 +93,7 @@ export const PdfViewer = ({ fileId }: { fileId: string }) => {
     } catch (error) {
       setError(strings.memoRequestError.fetchSummaryError);
     }
+    setSummaryLoading(false);
   };
 
   let pdfContent = null;
@@ -179,14 +182,11 @@ export const PdfViewer = ({ fileId }: { fileId: string }) => {
           boxShadow: 24,
           p: 3,
           width: "80%",
-        }}
-        >
+        }}>
           <Typography variant="h6" gutterBottom>
             {strings.memoScreen.summaryTitle}
           </Typography>
-          {summaryText ? (
-            <Typography variant="body1">{summaryText}</Typography>
-          ) : (
+          {summaryLoading ? (
             <Box 
               display="flex" 
               justifyContent="center" 
@@ -195,6 +195,8 @@ export const PdfViewer = ({ fileId }: { fileId: string }) => {
             >
               <CircularProgress />
             </Box>
+          ) : (
+            <Typography variant="body1">{summaryText}</Typography>
           )}
           <Button onClick={() => setIsDialogOpen(false)} color="primary" fullWidth>
             {strings.memoScreen.close}

@@ -18,7 +18,7 @@ const CardImage = ({ src, alt, onImageClick }: ImageProps) => {
   return (
     <img
       src={src}
-      alt={alt || "Image"}
+      alt={alt ?? "Image"}
       style={{
         width: "100%",
         height: "auto",
