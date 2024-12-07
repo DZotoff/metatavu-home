@@ -10,6 +10,7 @@ import {
 import ReactMarkdown from "react-markdown";
 import { TrelloCard, TrelloMember } from "src/generated/homeLambdasClient";
 import strings from "src/localization/strings";
+import CardImage from "../trello-cards/card-image";
 
 /**
  * Interface for CardDialog component
@@ -48,18 +49,6 @@ const CardDialog = ({
   onImageClick,
 }: CardDialogProps ) => {
 
-  /**
-   * Handles the keydown event for an image element
-   * 
-   * @param event event
-   * @param src source URL of the image
-   */
-  const handleImageKey = (event: React.KeyboardEvent<HTMLImageElement>, src: string) => {
-    if (event.key === "Enter" || event.key === " ") {
-      onImageClick(src);
-    }
-  };
-
   return (
     <Dialog open={isOpen} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>{selectedCard?.title || "" }</DialogTitle>
@@ -67,17 +56,10 @@ const CardDialog = ({
         <ReactMarkdown
           components={{
             img: ({ node, ...props }) => (
-              <img
-                {...props}
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  cursor: "pointer",
-                }}
-                alt={props.alt || "Image"}
+              <CardImage
                 src={props.src || ""}
-                onClick={() => onImageClick(props.src || "")}
-                onKeyDown={(event) => handleImageKey(event, props.src || "")}
+                alt={props.alt}
+                onImageClick={onImageClick}
               />
             ),
           }}
