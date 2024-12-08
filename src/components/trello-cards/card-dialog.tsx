@@ -10,7 +10,6 @@ import {
 import ReactMarkdown from "react-markdown";
 import { TrelloCard, TrelloMember } from "src/generated/homeLambdasClient";
 import strings from "src/localization/strings";
-import CardImage from "../trello-cards/card-image";
 
 /**
  * Interface for CardDialog component
@@ -35,8 +34,6 @@ interface CardDialogProps {
   onImageClick: (src: string) => void;
 }
 
-
-
 /**
  * CardDialog component to display Trello card data
  */
@@ -57,10 +54,15 @@ const CardDialog = ({
    * @param props  image props
    */
   const renderImage = (props: any) => (
-    <CardImage
-      src={props.src || ""}
-      alt={props.alt}
-      onImageClick={onImageClick}
+    <img
+      src={props.src}
+      alt={props.alt ?? "Image"}
+      style={{
+        width: "100%",
+        height: "auto",
+        cursor: "pointer",
+      }}
+      onClick={() => onImageClick(props.src)}
     />
   );
 

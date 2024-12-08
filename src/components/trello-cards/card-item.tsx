@@ -15,7 +15,6 @@ import UserRoleUtils from "src/utils/user-role-utils";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline"
 import ReactMarkdown from "react-markdown";
 import { TrelloCard, TrelloMember } from "src/generated/homeLambdasClient";
-import CardImage from "../trello-cards/card-image";
 
 /**
  * Interface for CardFilter component
@@ -49,9 +48,14 @@ const CardItem = ({
    * @param props  image props
    */
   const renderImage = (props: any) => (
-    <CardImage
-      src={props.src || ""}
-      alt={props.alt}
+    <img
+      src={props.src}
+      alt={props.alt ?? "Image"}
+      style={{
+        width: "100%",
+        height: "auto",
+        cursor: "pointer",
+      }}
     />
   );
 
