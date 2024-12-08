@@ -2,22 +2,26 @@ import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { DateTime } from "luxon";
 import { useLambdasApi } from "src/hooks/use-api";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import strings from "src/localization/strings";
 import { PdfFile } from "src/generated/homeLambdasClient";
 import { errorAtom } from "src/atoms/error";
 import { PdfViewer } from "../memos/memo-viewer";
 import MemoList from "../memos/memo-list";
+import { authAtom } from "src/atoms/auth";
 
 /**
  * Memo screen component
  */
 const MemoScreen = () => {
   const [selectedYear, setSelectedYear] = useState<DateTime | null>(DateTime.now());
+  const auth = useAtomValue(authAtom);
+  const loggedinuser = auth?.token?.sub ?? "";
   const [fileList, setFileList] = useState<PdfFile[]>([]);
   const [selectedFileId, setSelectedFileId] = useState<string>();
   const { memoApi } = useLambdasApi();
   const setError = useSetAtom(errorAtom);
+  // console.log(loggedinuser)
 
   useEffect(() => {
     fetchMemos();
@@ -33,6 +37,7 @@ const MemoScreen = () => {
     const formattedDate = selectedYear.toJSDate();
     try {
       const validFiles = await memoApi.getMemos({ date: formattedDate });
+      // console.log(validFiles)
       setFileList(validFiles);
       setSelectedFileId(validFiles[0]?.id);
     } catch (error) {
