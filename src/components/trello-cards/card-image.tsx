@@ -15,6 +15,19 @@ interface ImageProps {
  * CardImage component to display an image with interactive functionality
  */
 const CardImage = ({ src, alt, onImageClick }: ImageProps) => {
+  if (onImageClick) 
+    return (
+      <img
+        src={src}
+        alt={alt ?? "Image"}
+        style={{
+          width: "100%",
+          height: "auto",
+          cursor: "pointer",
+        }}
+        onClick={() => onImageClick(src)}
+      />
+    )
   return (
     <img
       src={src}
@@ -24,7 +37,6 @@ const CardImage = ({ src, alt, onImageClick }: ImageProps) => {
         height: "auto",
         cursor: "pointer",
       }}
-      onClick={() => onImageClick ? onImageClick(src) : () => {}}
     />
   );
 };
