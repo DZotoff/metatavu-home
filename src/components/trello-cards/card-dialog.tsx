@@ -36,6 +36,20 @@ interface CardDialogProps {
 }
 
 /**
+ * Renders images inside the ReactMarkdown component
+ * 
+ * @param node markdown node data
+ * @param props image props
+ */
+const renderImage = (props: any) => (
+  <CardImage
+    src={props.src || ""}
+    alt={props.alt}
+    onImageClick={props.onImageClick}
+  />
+);
+
+/**
  * CardDialog component to display Trello card data
  */
 const CardDialog = ({
@@ -55,13 +69,7 @@ const CardDialog = ({
       <DialogContent>
         <ReactMarkdown
           components={{
-            img: ({ node, ...props }) => (
-              <CardImage
-                src={props.src || ""}
-                alt={props.alt}
-                onImageClick={onImageClick}
-              />
-            ),
+            img: ({ node, ...props }) => renderImage({ ...props, onImageClick })
           }}
         >
           {selectedCard?.description || strings.cardRequestError.noDescription}
