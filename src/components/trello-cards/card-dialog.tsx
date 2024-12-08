@@ -54,18 +54,19 @@ const CardDialog = ({
    * @param props  image props
    */
   const renderImage = (props: any) => (
-    <img
-      src={props.src}
-      alt={props.alt ?? "Image"}
-      style={{
-        width: "100%",
-        height: "auto",
-        cursor: "pointer",
-      }}
-      onClick={() => onImageClick(props.src)}
-      onKeyDown={() => onImageClick(props.src)}
-      tabIndex={0}
-    />
+    <button 
+      style={{border: "none", padding: "0px", backgroundColor: "white"}}
+      onClick={() => onImageClick(props.src)}>
+      <img
+        src={props.src}
+        alt={props.alt ?? "Image"}
+        style={{
+          width: "100%",
+          height: "auto",
+          cursor: "pointer",
+        }}
+      />
+    </button>
   );
 
   return (
