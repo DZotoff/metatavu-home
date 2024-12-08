@@ -43,6 +43,18 @@ const CardItem = ({
 }: CardItemProps) => {
   const adminMode = UserRoleUtils.adminMode();
 
+  /**
+   * Renders images inside the ReactMarkdown component
+   * 
+   * @param props  image props
+   */
+  const renderImage = (props: any) => (
+    <CardImage
+      src={props.src || ""}
+      alt={props.alt}
+    />
+  );
+
   return (
     <Card
     sx={{
@@ -57,12 +69,7 @@ const CardItem = ({
       <Box style={{height: '80%', overflow: 'hidden'}}>
         <ReactMarkdown
           components={{
-            img: ({ node, ...props }) => (
-              <CardImage
-                src={props.src || ""}
-                alt={props.alt}
-              />
-            ),
+            img: renderImage
           }}
         >
           {card.description ? card.description : `${strings.cardRequestError.noDescription}`}

@@ -24,7 +24,7 @@ const CardImage = ({ src, alt, onImageClick }: ImageProps) => {
         height: "auto",
         cursor: "pointer",
       }}
-      onClick={() => onImageClick && onImageClick(src)}
+      onClick={() => onImageClick ? onImageClick(src) : () => {}}
     />
   );
 };
