@@ -64,9 +64,11 @@ const MemoList = ({
           }
         }}
         views={["year"]}
+        minDate={dayjs("2023-01-01")}
+        disableFuture
       />
     </LocalizationProvider>
-    <List sx={{ mt: 2 }}>
+    <List sx={{ mt: 2, maxHeight: "80%", overflowY: 'auto' }}>
       {fileList.map((file) => (
         <ListItem key={file.id} disablePadding>
           <ListItemButton onClick={() => setSelectedFileId(file.id || "")}>

@@ -45,7 +45,7 @@ const MemoScreen = () => {
       display="flex" 
       flexDirection="row" 
       width="100%" 
-      height="50vh"
+      height="80vh"
     >
       <MemoList
         selectedYear={selectedYear}
