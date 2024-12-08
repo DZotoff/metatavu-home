@@ -63,6 +63,8 @@ const CardDialog = ({
         cursor: "pointer",
       }}
       onClick={() => onImageClick(props.src)}
+      onKeyDown={() => onImageClick(props.src)}
+      tabIndex={0}
     />
   );
 
