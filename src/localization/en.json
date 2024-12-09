@@ -33,7 +33,8 @@
     "questionnaireLoadFailed": "Error while loading questionnaires",
     "questionnaireDeleteFailed": "Error while deleting questionnaire",
     "questionnaireSaveFailed": "Error while saving questionnaire",
-    "fetchFailedFlextime": "Error while fetching flextime data"
+    "fetchFailedFlextime": "Error while fetching flextime data",
+    "noSeveraUserId" : "The logged-in user does not have a Severa user ID. Please contact support."
   },
   "localization": {
     "en": "EN",
@@ -275,10 +276,12 @@
     "confirm": "Confirm Delete"
   },
   "balanceCard": {
-    "totalFlextimeBalance": "Total flextime balance: {0} hours",
+    "totalFlextimeBalance": "Total flextime balance:",
     "employeeBalances": "Employee time totals and balances",
     "viewAllTimeEntries": "View all employees time totals and balances",
     "balance": "Balance",
-    "atTheEndOf": "At the end of {0}"
+    "atTheEndOf": "At the end of {0}",
+    "hour": "hour",
+    "hours": "hours"
   }
 }

@@ -18,7 +18,7 @@ import { getSeveraUserId } from "src/utils/user-utils";
  * Component for displaying user's balance
  */
 const BalanceCard = () => {
-  const user = useAtomValue(usersAtom);
+  const users = useAtomValue(usersAtom);
   const userProfile = useAtomValue(userProfileAtom);
   const setError = useSetAtom(errorAtom);
   const [loading, setLoading] = useState(false);
@@ -32,7 +32,7 @@ const BalanceCard = () => {
    */
   const getUsersFlextimes = async () => {
     setLoading(true);
-    const loggedInUser = user.find((user: User) => user.id === userProfile?.id);
+    const loggedInUser = users.find((user: User) => user.id === userProfile?.id);
     if (loggedInUser) {
       const severaUserId = getSeveraUserId(loggedInUser);
       try {
@@ -48,24 +48,30 @@ const BalanceCard = () => {
   };
 
   /**
-   * Fetch user's flextime data when users or userProfile changes.
+   * Fetch user's flextime data when users is undefined.
    */
   useEffect(() => {
     if (!usersFlextime) {
       getUsersFlextimes();
     }
-  }, [user]);
+  }, [users]);
 
   /**
    * Render user's flextime data.
    */
   const renderUserFlextime = () => {
+    if (!usersFlextime?.totalFlextimeBalance) {
+      return <Skeleton />;
+    }
+    const totalFlextimeBalance = usersFlextime.totalFlextimeBalance;
+    const textColor = totalFlextimeBalance >= 0 ? "green" : "red";
+    const hourLabel =
+      totalFlextimeBalance === 1 ? strings.balanceCard.hour : strings.balanceCard.hours;
+
     return (
       <Typography variant="body1">
-        {strings.formatString(
-          strings.balanceCard.totalFlextimeBalance,
-          usersFlextime?.totalFlextimeBalance ?? ""
-        )}
+        {strings.balanceCard.totalFlextimeBalance}{" "}
+        <span style={{ color: textColor }}>{totalFlextimeBalance}</span> {hourLabel}
       </Typography>
     );
   };

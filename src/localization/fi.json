@@ -33,7 +33,8 @@
     "questionnaireSaveFailed": "Kyselylomakkeen tallentaminen epäonnistui",
     "questionnaireLoadFailed": "Kyselylomakkeiden lataaminen epäonnistui",
     "questionnaireDeleteFailed": "Kyselylomakkeen poistaminen epäonnistui",
-    "fetchFailedFlextime": "Joustotyöaikatietojen hakeminen epäonnistui"
+    "fetchFailedFlextime": "Joustotyöaikatietojen hakeminen epäonnistui",
+    "noSeveraUserId": "Kirjautuneella käyttäjällä ei ole Severa-käyttäjätunnusta. Ota yhteys tukeen."
   },
   "localization": {
     "en": "EN",
@@ -275,10 +276,12 @@
     "confirm": "Vahvista poisto"
   },
   "balanceCard": {
-    "totalFlextimeBalance": "Kokonaisbalanssi: {0} tuntia",
+    "totalFlextimeBalance": "Kokonaisbalanssi:",
     "employeeBalances": "Henkilöstön aikakirjaukset ja saldot",
     "viewAllTimeEntries": "Kaikki henkilöstön aikakirjaukset ja saldot",
     "balance": "Saldo",
-    "atTheEndOf": "{0} lopussa"
+    "atTheEndOf": "{0} lopussa",
+    "hour": "tunti",  
+    "hours": "Tuntia"
   }
 }
