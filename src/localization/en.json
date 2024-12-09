@@ -283,6 +283,6 @@
     "save": "Save changes",
     "edit": "Edit question",
     "remove": "Remove from preview",
-    "saveAlert": "All checkboxes or question text are empty"
+    "saveAlert": "Question is missing required fields"
   }
 }

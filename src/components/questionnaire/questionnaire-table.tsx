@@ -33,7 +33,7 @@ import type { User } from "src/generated/homeLambdasClient";
 const QuestionnaireTable = () => {
   const adminMode = UserRoleUtils.adminMode();
   const navigate = useNavigate();
-  const [, setMode] = useState<QuestionnairePreviewMode>(QuestionnairePreviewMode.FILL);
+  const [_, setMode] = useState<QuestionnairePreviewMode>();
   const { questionnairesApi } = useLambdasApi();
   const [questionnaires, setQuestionnaires] = useState<Questionnaire[]>([]);
   const [loading, setLoading] = useState(false);

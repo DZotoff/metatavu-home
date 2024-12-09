@@ -122,6 +122,7 @@ const QuestionnaireManager = ({ mode }: Props) => {
    */
   const handleSubmit = async () => {
     let correctAnswersCount = 0;
+    console.log(correctAnswersCount);
     questionnaire.questions?.forEach((question) => {
       const userAnswers = userResponses[question.questionText] || [];
       const correctAnswers = question.answerOptions
@@ -132,6 +133,7 @@ const QuestionnaireManager = ({ mode }: Props) => {
       }
     });
 
+    console.log(correctAnswersCount);
     const passed = correctAnswersCount >= questionnaire.passScore;
 
     if (passed) {
@@ -178,8 +180,6 @@ const QuestionnaireManager = ({ mode }: Props) => {
 
   /**
    * Function to render the content of the card according to the mode
-   * 
-   * @returns 
    */
   const renderCardContent = () => {
     switch (mode) {
@@ -199,8 +199,6 @@ const QuestionnaireManager = ({ mode }: Props) => {
 
   /**
    * Render the buttons based on the mode
-   * 
-   * @returns
    */
   const renderButtons = () => {
     switch (mode) {
@@ -240,8 +238,6 @@ const QuestionnaireManager = ({ mode }: Props) => {
 
   /**
    * Render the dialog based on the mode
-   * 
-   * @returns
    */
   const renderDialog = () => {
     switch (mode) {

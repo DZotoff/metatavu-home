@@ -283,6 +283,6 @@
     "save": "Tallenna muutokset",
     "edit": "Muokkaa kysymystä",
     "remove": "Poista kysymys",
-    "saveAlert": "Kysymysteksti tai vastausvaihtoehdot ovat tyhjiä"
+    "saveAlert": "Kysymyksestä puuttuu pakollisia tietoja"
   }
 }

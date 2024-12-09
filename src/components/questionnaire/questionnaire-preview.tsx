@@ -99,7 +99,7 @@ const QuestionnairePreview = ({
   /**
    * Function to handle saving changes in the preview edit
    */
-  const handleSaveClick = () => {
+  const handleSave = () => {
     if (editedQuestion !== null && editingIndex !== null) {
       const allCheckboxesEmpty = editedQuestion.answerOptions.every((option) => !option.isCorrect);
       const isQuestionTextEmpty = !editedQuestion.questionText.trim();
@@ -164,7 +164,7 @@ const QuestionnairePreview = ({
                     <Button
                       variant="contained"
                       color="primary"
-                      onClick={handleSaveClick}
+                      onClick={handleSave}
                       disabled={editedQuestion?.answerOptions === null}
                       sx={{ mt: 2 }}
                     >
