@@ -46,7 +46,9 @@ const QuestionnaireManager = ({ mode }: Props) => {
   });
   const [loading, setLoading] = useState(false);
   const [userResponses, setUserResponses] = useState<UserResponses>({});
-  const [questionnaireFeedbackMessage, setQuestionnaireFeedbackMessage] = useState<string | null>(null);
+  const [questionnaireFeedbackMessage, setQuestionnaireFeedbackMessage] = useState<string | null>(
+    null
+  );
   const [questionnaireFeedbackDialogOpen, setQuestionnaireFeedbackDialogOpen] = useState(false);
   const users = useAtomValue(usersAtom);
   const userProfile = useAtomValue(userProfileAtom);
@@ -61,6 +63,7 @@ const QuestionnaireManager = ({ mode }: Props) => {
       try {
         const fetchedQuestionnaire = await questionnairesApi.getQuestionnairesById({ id });
         setQuestionnaire(fetchedQuestionnaire);
+        console.log(fetchedQuestionnaire);
       } catch (error) {
         setError(`${strings.error.questionnaireLoadFailed}, ${error}`);
       }
@@ -116,24 +119,30 @@ const QuestionnaireManager = ({ mode }: Props) => {
   };
 
   /**
-   * Function to handle the submission of the questionnaire and calculate if the user has passed it
+   * Function to count all correct answers in the filled up questionnaire
+   */
+  const countCorrectAnswers = () => {
+    let answersCount = 0;
+
+    questionnaire.questions?.forEach((question) => {
+      const userAnswers = userResponses[question.questionText] || [];
+
+      question.answerOptions.forEach((option, index) => {
+        if (option.isCorrect && userAnswers.includes(option.label)) {
+          answersCount++;
+        }
+      });
+    });
+    return answersCount;
+  };
+
+  /**
+   * Function to handle the submission of the questionnaire
    * Save users Id to the passedUsers array in the questionnaire
    * Determine message based on the result
    */
   const handleSubmit = async () => {
-    let correctAnswersCount = 0;
-    console.log(correctAnswersCount);
-    questionnaire.questions?.forEach((question) => {
-      const userAnswers = userResponses[question.questionText] || [];
-      const correctAnswers = question.answerOptions
-        .filter((option) => option.isCorrect)
-        .map((option) => option.label);
-      if (userAnswers.every((answer) => correctAnswers.includes(answer))) {
-        correctAnswersCount++;
-      }
-    });
-
-    console.log(correctAnswersCount);
+    const correctAnswersCount = countCorrectAnswers();
     const passed = correctAnswersCount >= questionnaire.passScore;
 
     if (passed) {
@@ -145,7 +154,7 @@ const QuestionnaireManager = ({ mode }: Props) => {
             passedUsers: [...(questionnaire.passedUsers || []), loggedInUser?.id as string]
           }
         });
-      setQuestionnaireFeedbackMessage(
+        setQuestionnaireFeedbackMessage(
           `${strings.formatString(
             strings.questionnaireManager.passed,
             correctAnswersCount,
@@ -158,7 +167,7 @@ const QuestionnaireManager = ({ mode }: Props) => {
         setError(`${strings.error.questionnaireSaveFailed}, ${error}`);
       }
     } else {
-    setQuestionnaireFeedbackMessage(
+      setQuestionnaireFeedbackMessage(
         `${strings.formatString(
           strings.questionnaireManager.failed,
           correctAnswersCount,

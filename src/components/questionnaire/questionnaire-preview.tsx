@@ -41,7 +41,6 @@ const QuestionnairePreview = ({
 }: Props) => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editedQuestion, setEditedQuestion] = useState<Question | null>(null);
-  const [isDisabled, setIsDisabled] = useState(false);
 
   /**
    * Fuction to handle the edit click, able to edit the question in preview
