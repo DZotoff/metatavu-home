@@ -96,9 +96,9 @@ const QuestionnairePreview = ({
   };
 
   /**
-   * Function to handle saving changes in the preview edit
+   * Function to validate the edited question
    */
-  const handleSave = () => {
+  const validateEditedQuestion = () => {
     if (editedQuestion !== null && editingIndex !== null) {
       const allCheckboxesEmpty = editedQuestion.answerOptions.every((option) => !option.isCorrect);
       const isQuestionTextEmpty = !editedQuestion.questionText.trim();
@@ -107,11 +107,17 @@ const QuestionnairePreview = ({
         alert(`${strings.questionnairePreview.saveAlert}`);
         return;
       }
-
       editQuestionInPreview(editingIndex, editedQuestion);
+    }
+  };
+
+  /**
+   * Function to handle saving changes in the preview edit
+   */
+  const handleSave = () => {
+      validateEditedQuestion();
       setEditingIndex(null);
       setEditedQuestion(null);
-    }
   };
 
   return (
