@@ -1,4 +1,4 @@
-import { Grid, Typography, Card, CardContent, Skeleton, Box } from "@mui/material";
+import { Grid, Typography, Card, CardContent, Skeleton } from "@mui/material";
 import strings from "src/localization/strings";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import { errorAtom } from "src/atoms/error";
@@ -26,15 +26,24 @@ const BalanceCard = () => {
   const [usersFlextime, setUsersFlextime] = useState<Flextime>();
   const yesterday = DateTime.now().minus({ days: 1 });
   const { flexTimeApi } = useLambdasApi();
+  const loggedInUser = users.find((user: User) => user.id === userProfile?.id);
+  const severaUserId = getSeveraUserId(loggedInUser);
+
+  /**
+   * Fetch user's flextime data when it is undefined.
+   */
+  useEffect(() => {
+    if (!usersFlextime) {
+      getUsersFlextimes();
+    }
+  }, [users]);
 
   /**
    * Initialize logged in users's time data.
    */
   const getUsersFlextimes = async () => {
     setLoading(true);
-    const loggedInUser = users.find((user: User) => user.id === userProfile?.id);
     if (loggedInUser) {
-      const severaUserId = getSeveraUserId(loggedInUser);
       try {
         const fetchedUsersFlextime = await flexTimeApi.getFlextimeBySeveraUserId({
           severaUserId
@@ -46,15 +55,6 @@ const BalanceCard = () => {
     }
     setLoading(false);
   };
-
-  /**
-   * Fetch user's flextime data when users is undefined.
-   */
-  useEffect(() => {
-    if (!usersFlextime) {
-      getUsersFlextimes();
-    }
-  }, [users]);
 
   /**
    * Render user's flextime data.
@@ -75,6 +75,10 @@ const BalanceCard = () => {
       </Typography>
     );
   };
+
+  if (!severaUserId) {
+    return null;
+  }
 
   return (
     <Link
