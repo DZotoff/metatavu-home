@@ -34,7 +34,7 @@
     "questionnaireDeleteFailed": "Error while deleting questionnaire",
     "questionnaireSaveFailed": "Error while saving questionnaire",
     "fetchFailedFlextime": "Error while fetching flextime data",
-    "noSeveraUserId" : "The logged-in user does not have a Severa user ID. Please contact support."
+    "noSeveraUserId" : "One of your user is missing severaUserId, please contact a member of the metatavu home development team for more information."
   },
   "localization": {
     "en": "EN",

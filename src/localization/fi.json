@@ -34,7 +34,7 @@
     "questionnaireLoadFailed": "Kyselylomakkeiden lataaminen epäonnistui",
     "questionnaireDeleteFailed": "Kyselylomakkeen poistaminen epäonnistui",
     "fetchFailedFlextime": "Joustotyöaikatietojen hakeminen epäonnistui",
-    "noSeveraUserId": "Kirjautuneella käyttäjällä ei ole Severa-käyttäjätunnusta. Ota yhteys tukeen."
+    "noSeveraUserId": "Käyttäjältä puuttuu Severa-käyttäjätunnus, ota yhteyttä Metatavun kehitystiimiin lisätietoja varten."
   },
   "localization": {
     "en": "EN",
