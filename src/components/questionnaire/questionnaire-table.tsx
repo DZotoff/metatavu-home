@@ -45,6 +45,7 @@ const QuestionnaireTable = () => {
   const users = useAtomValue(usersAtom);
   const userProfile = useAtomValue(userProfileAtom);
   const loggedInUser = users.find((user: User) => user.id === userProfile?.id);
+  
 
   useEffect(() => {
     const fetchQuestionnaires = async () => {
@@ -106,6 +107,10 @@ const QuestionnaireTable = () => {
    * @param params
    */
   const handleRowClick = (params: GridRowParams) => {
+    const userHasPassed = params.row.passedUsers?.includes(loggedInUser?.id);
+    if (userHasPassed) {
+      return;
+    }
     setSelectedQuestionnaire(params.row as Questionnaire);
     setMode(QuestionnairePreviewMode.FILL);
     navigate(`/questionnaire/${params.row.id}`);
