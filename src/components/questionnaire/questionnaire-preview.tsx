@@ -192,7 +192,7 @@ const QuestionnairePreview = ({
                   </>
                 )}
               </Box>
-              <Box sx={{ display: "flex", flexDirection: "row", alignItems: "flex-end", mr: 2 }}>
+              <Box sx={{ display: "flex", flexDirection: "row", alignItems: "flex-end", mr: 2, gap: 2 }}>
                 <Button
                   variant="contained"
                   color="secondary"

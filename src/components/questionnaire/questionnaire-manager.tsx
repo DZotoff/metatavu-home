@@ -46,9 +46,7 @@ const QuestionnaireManager = ({ mode }: Props) => {
   });
   const [loading, setLoading] = useState(false);
   const [userResponses, setUserResponses] = useState<UserResponses>({});
-  const [questionnaireFeedbackMessage, setQuestionnaireFeedbackMessage] = useState<string | null>(
-    null
-  );
+  const [questionnaireFeedbackMessage, setQuestionnaireFeedbackMessage] = useState<string | null>(null);
   const [questionnaireFeedbackDialogOpen, setQuestionnaireFeedbackDialogOpen] = useState(false);
   const users = useAtomValue(usersAtom);
   const userProfile = useAtomValue(userProfileAtom);
@@ -127,7 +125,7 @@ const QuestionnaireManager = ({ mode }: Props) => {
     questionnaire.questions?.forEach((question) => {
       const userAnswers = userResponses[question.questionText] || [];
 
-      question.answerOptions.forEach((option, index) => {
+      question.answerOptions.forEach((option) => {
         if (option.isCorrect && userAnswers.includes(option.label)) {
           answersCount++;
         }
