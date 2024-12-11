@@ -12,19 +12,14 @@ import { errorAtom } from "src/atoms/error";
  */
 export const getSeveraUserId = (user: User | undefined): string => {
   const setError = useSetAtom(errorAtom);
-  try {
-    const severaUserId = user?.attributes?.severaUserId;
+  const severaUserId = user?.attributes?.severaUserId;
 
-    if (!severaUserId) {
-      if (import.meta.env.MODE === "development") {
-        return config.user.testUserSeveraId ?? "";
-      }
-      setError(strings.error.noSeveraUserId);
-      return "";
+  if (!severaUserId) {
+    if (import.meta.env.MODE === "development") {
+      return config.user.testUserSeveraId ?? "";
     }
-    return severaUserId;
-  } catch (error) {
-    setError(`${strings.error.noSeveraUserId}, ${error}`);
+    setError(strings.error.noSeveraUserId);
     return "";
   }
+  return severaUserId;
 };
