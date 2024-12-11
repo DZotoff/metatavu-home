@@ -61,7 +61,6 @@ const QuestionnaireManager = ({ mode }: Props) => {
       try {
         const fetchedQuestionnaire = await questionnairesApi.getQuestionnairesById({ id });
         setQuestionnaire(fetchedQuestionnaire);
-        console.log(fetchedQuestionnaire);
       } catch (error) {
         setError(`${strings.error.questionnaireLoadFailed}, ${error}`);
       }
