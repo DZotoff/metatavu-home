@@ -51,6 +51,7 @@ export interface Localized extends LocalizedStringsMethods {
     questionnaireDeleteFailed: string;
     fetchFailedFlextime: string;
     noSeveraUserId: string;
+    noFlextimeData: string;
   };
   /**
    * Translations related to localization

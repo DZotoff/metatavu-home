@@ -61,7 +61,7 @@ const BalanceCard = () => {
    */
   const renderUserFlextime = () => {
     if (!usersFlextime?.totalFlextimeBalance) {
-      return <Skeleton />;
+      return <Typography variant="body1">{strings.error.noFlextimeData}</Typography>;
     }
     const totalFlextimeBalance = usersFlextime.totalFlextimeBalance;
     const textColor = totalFlextimeBalance >= 0 ? "green" : "red";
@@ -75,10 +75,6 @@ const BalanceCard = () => {
       </Typography>
     );
   };
-
-  if (!severaUserId) {
-    return null;
-  }
 
   return (
     <Link
