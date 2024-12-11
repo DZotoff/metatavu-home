@@ -4,13 +4,21 @@ import QuestionnaireCard from "../home/questionnaire-card";
 import VacationsCard from "../home/vacations-card";
 import SprintViewCard from "../home/sprint-view-card";
 import UserRoleUtils from "src/utils/user-role-utils";
+import type { User } from "src/generated/homeLambdasClient";
+import { usersAtom } from "src/atoms/user";
+import { userProfileAtom } from "src/atoms/auth";
+import { useAtomValue } from "jotai";
 
 /**
  * Home screen component
  */
 const HomeScreen = () => {
   const developerMode = UserRoleUtils.developerMode();
-  const balanceCard = developerMode ? <BalanceCard /> : null;
+  const users = useAtomValue(usersAtom);
+  const userProfile = useAtomValue(userProfileAtom);
+  const loggedInUser = users.find((user: User) => user.id === userProfile?.id);
+  const isOptIn = loggedInUser?.attributes?.isOptIn;
+  const balanceCard = developerMode && isOptIn ? <BalanceCard /> : null;
   const sprintViewCard = developerMode ? <SprintViewCard /> : null;
   const vacationsCard = developerMode ? <VacationsCard /> : null;
   const questionairesCard = developerMode ? <QuestionnaireCard /> : null;
