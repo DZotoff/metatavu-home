@@ -16,7 +16,8 @@ import {
   TasksApi,
   TimeEntriesApi,
   UsersApi,
-  QuestionnairesApi
+  QuestionnairesApi,
+  FlexTimeApi
 } from "../generated/homeLambdasClient";
 
 /**
@@ -79,6 +80,7 @@ export const getLambdasApiClient = (accessToken?: string) => {
     timeEntriesApi: new TimeEntriesApi(getConfiguration()),
     slackAvatarsApi: new SlackAvatarsApi(getConfiguration()),
     usersApi: new UsersApi(getConfiguration()),
-    questionnairesApi: new QuestionnairesApi(getConfiguration())
+    questionnairesApi: new QuestionnairesApi(getConfiguration()),
+    flexTimeApi: new FlexTimeApi(getConfiguration())
   };
 };

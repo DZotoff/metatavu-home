@@ -49,6 +49,9 @@ export interface Localized extends LocalizedStringsMethods {
     questionnaireSaveFailed: string;
     questionnaireLoadFailed: string;
     questionnaireDeleteFailed: string;
+    fetchFailedFlextime: string;
+    noSeveraUserId: string;
+    noFlextimeData: string;
   };
   /**
    * Translations related to localization
@@ -360,6 +363,18 @@ export interface Localized extends LocalizedStringsMethods {
     cancel: string;
     confirm: string;
   }; 
+  /**
+   * Translations related to Balance Card
+   */
+  balanceCard: {
+    totalFlextimeBalance: string;
+    employeeBalances: string;
+    viewAllTimeEntries: string;
+    balance: string;
+    atTheEndOf: string;
+    hour: string;
+    hours: string;
+  };
 }
 
 /**
