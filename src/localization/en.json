@@ -239,7 +239,7 @@
     "delete": "Delete", 
     "back": "Back"
   },
-  "newQuestionnaireScreen": {
+  "newQuestionnaireBuilder": {
     "makeNewQuestionnaire": "Make a New Questionnaire",
     "title": "Title",
     "insertTitle": "Insert title",
@@ -275,6 +275,18 @@
     "confirmDeleteTitle": "Delete {0}?",
     "cancel": "Cancel",
     "confirm": "Confirm Delete"
+  },
+  "questionnaireManager": {
+    "passed": "You have passed the questionnaire with {0} correct answers out of {1}.",
+    "failed": "You have failed the questionnaire with {0} correct answers out of {1}.", 
+    "goBack": "Go back",
+    "submit": "Submit"
+  },
+  "questionnairePreview": {
+    "save": "Save changes",
+    "edit": "Edit question",
+    "remove": "Remove from preview",
+    "saveAlert": "Question is missing required fields"
   },
   "balanceCard": {
     "totalFlextimeBalance": "Total flextime balance:",

@@ -239,7 +239,7 @@
     "delete": "Poista",
     "back": "Takaisin"
   },
-  "newQuestionnaireScreen": {
+  "newQuestionnaireBuilder": {
     "makeNewQuestionnaire" : "Tee uusi kysely",
     "title": "Otsikko",
     "insertTitle": "Syötä otsikko",
@@ -275,6 +275,18 @@
     "confirmDeleteTitle": "Poista {0}?",
     "cancel": "Peruuta",
     "confirm": "Vahvista poisto"
+  },
+  "questionnaireManager": {
+    "passed": "Olet läpäissyt kyselyn, sait {0} / {1} oikein",
+    "failed": "Et läpäissyt kyselyä, sait {0} / {1} oikein",
+    "goBack": "Takaisin",
+    "submit": "Lähetä vastaukset"
+  },
+  "questionnairePreview": {
+    "save": "Tallenna muutokset",
+    "edit": "Muokkaa kysymystä",
+    "remove": "Poista kysymys",
+    "saveAlert": "Kysymyksestä puuttuu pakollisia tietoja"
   },
   "balanceCard": {
     "totalFlextimeBalance": "Kokonaisbalanssi:",
