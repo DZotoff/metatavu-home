@@ -19,9 +19,11 @@ import { useMemo } from "react";
 import RestrictedContentProvider from "./components/providers/restricted-content-provider";
 import SprintViewScreen from "./components/screens/sprint-view-screen";
 import QuestionnaireScreen from "./components/screens/questionnaire-screen";
-import NewQuizScreen from "./components/screens/new-questionnaire-screen";
 import MemoScreen from "./components/screens/memo-screen";
 import CardScreen from "./components/screens/card-screen";
+import NewQuestionnaireBuilder from "./components/questionnaire/new-questionnaire-builder";
+import QuestionnaireManager from "./components/questionnaire/questionnaire-manager";
+import { QuestionnairePreviewMode } from "./types";
 
 /**
  * Application component
@@ -66,6 +68,10 @@ const App = () => {
         {
           path: "/cards",
           element: <CardScreen />
+        },
+        {
+          path: "/questionnaire/:id",
+          element: <QuestionnaireManager mode={QuestionnairePreviewMode.FILL} />
         }
       ]
     },
@@ -100,7 +106,11 @@ const App = () => {
         },
         {
           path: "/admin/newQuestionnaire",
-          element: <NewQuizScreen />
+          element: <NewQuestionnaireBuilder />
+        },
+        {
+          path: "/admin/questionnaire/:id/edit",
+          element: <QuestionnaireManager mode={QuestionnairePreviewMode.EDIT} />
         }
       ]
     }

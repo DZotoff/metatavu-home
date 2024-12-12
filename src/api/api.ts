@@ -18,7 +18,8 @@ import {
   TimeEntriesApi,
   TrelloApi,
   UsersApi,
-  QuestionnairesApi
+  QuestionnairesApi,
+  FlexTimeApi
 } from "../generated/homeLambdasClient";
 
 /**
@@ -83,6 +84,7 @@ export const getLambdasApiClient = (accessToken?: string) => {
     usersApi: new UsersApi(getConfiguration()),
     memoApi: new MemoApi(getConfiguration()),
     trelloApi: new TrelloApi(getConfiguration()),
-    questionnairesApi: new QuestionnairesApi(getConfiguration())
+    questionnairesApi: new QuestionnairesApi(getConfiguration()),
+    flexTimeApi: new FlexTimeApi(getConfiguration()),
   };
 };
