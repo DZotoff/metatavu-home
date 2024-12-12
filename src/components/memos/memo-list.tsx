@@ -65,7 +65,11 @@ const MemoList = ({
         }}
         views={["year"]}
         minDate={dayjs("2023-01-01")}
+        maxDate={dayjs("2034-01-01")}
         disableFuture
+        slotProps={{
+          layout: { sx: {maxHeight: "140px"} }
+        }}
       />
     </LocalizationProvider>
     <List sx={{ mt: 2, maxHeight: "80%", overflowY: 'auto' }}>
